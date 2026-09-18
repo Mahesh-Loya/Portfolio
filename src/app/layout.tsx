@@ -4,6 +4,7 @@ import "./globals.css";
 import { Reveal } from "@/components/reveal";
 import { CommandPalette } from "@/components/command-palette";
 import { ThemeScript } from "@/components/theme-script";
+import { SITE_URL } from "@/lib/site-url";
 
 const grotesk = Inter_Tight({
   subsets: ["latin"],
@@ -25,10 +26,8 @@ const editorial = Instrument_Serif({
   display: "swap",
 });
 
-const SITE = "https://maheshloya.dev";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Mahesh Loya — AI systems engineer",
     template: "%s · Mahesh Loya",
@@ -46,7 +45,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Mahesh Loya" }],
   openGraph: {
     type: "website",
-    url: SITE,
+    url: SITE_URL,
     title: "Mahesh Loya — AI systems engineer",
     description:
       "I make noisy reality machine-readable. Voice pipelines, retrieval systems, and AI products in daily production use.",

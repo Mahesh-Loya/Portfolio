@@ -1,13 +1,12 @@
 import type { MetadataRoute } from "next";
 import { caseStudies } from "@/content/site";
-
-const BASE = "https://maheshloya.dev";
+import { SITE_URL } from "@/lib/site-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
-    { url: BASE, lastModified: new Date(), priority: 1 },
+    { url: SITE_URL, lastModified: new Date(), priority: 1 },
     ...caseStudies.map((study) => ({
-      url: `${BASE}/work/${study.slug}`,
+      url: `${SITE_URL}/work/${study.slug}`,
       lastModified: new Date(),
       priority: 0.8,
     })),
