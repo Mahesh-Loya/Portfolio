@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   SIGNAL — design tokens
+   Concept: noisy reality → structured action.
+   Dark-first, single accent, texture over gradient.
+   ───────────────────────────────────────────────────────────── */
+
+@theme {
+  /* Canvas */
+  --color-void: #0a0a0b;
+  --color-surface: #101012;
+  --color-raised: #17171a;
+  --color-line: #232327;
+  --color-line-bright: #33333a;
+
+  /* Ink */
+  --color-bone: #edede8;
+  --color-muted: #a1a1a6;
+  --color-faint: #6b6b72;
+
+  /* Single accent — acid lime. Deliberately not default-LLM purple. */
+  --color-signal: #c6f24e;
+  --color-signal-dim: #8fae37;
+  --color-signal-glow: #c6f24e26;
+
+  /* Semantic */
+  --color-warn: #ff8a3d;
+  --color-ok: #4ee2a4;
+
+  /* Type */
+  --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, "SF Mono", monospace;
+  --font-serif: var(--font-editorial), ui-serif, Georgia, serif;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-signal: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Light theme — full parity, not an afterthought. */
+:root[data-theme="light"] {
+  --color-void: #fbfbf9;
+  --color-surface: #f3f3ef;
+  --color-raised: #ffffff;
+  --color-line: #e2e2dc;
+  --color-line-bright: #cfcfc7;
+  --color-bone: #141414;
+  --color-muted: #55555c;
+  --color-faint: #86868e;
+  --color-signal: #5c7a12;
+  --color-signal-dim: #7f9c33;
+  --color-signal-glow: #5c7a1214;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-void);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-signal);
+    color: #0a0a0b;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer utilities {
+  /* Film grain + ordered dither. Gives the site a photographed feel
+     rather than a generated one. Fixed so it never scrolls with content. */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain-shift 800ms steps(4) infinite;
+  }
+
+  @keyframes grain-shift {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-2%, 1%); }
+    50% { transform: translate(1%, -2%); }
+    75% { transform: translate(2%, 2%); }
+  }
+
+  /* Hairline grid used behind structural sections. */
+  .gridlines {
+    background-image:
+      linear-gradient(to right, var(--color-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-line) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 20%, transparent 75%);
+  }
+
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  /* Small caps label used throughout as a section marker. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+
+  .rule {
+    height: 1px;
+    background: linear-gradient(to right, var(--color-line-bright), transparent);
+  }
+}
+
+/* Shared entrance animation, driven by IntersectionObserver via [data-reveal]. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.9s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo);
+}
+
+[data-reveal][data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .grain::after { animation: none; }
+}
