@@ -18,6 +18,20 @@ npm run typecheck
 No environment variables are required. The site runs, and the demo works, with nothing
 configured.
 
+The canonical origin used for metadata, Open Graph tags and the sitemap is resolved
+at build time: Vercel's own production domain is detected automatically, so deploying
+needs no configuration. Once a custom domain exists, set `NEXT_PUBLIC_SITE_URL` and it
+takes precedence.
+
+## Link previews
+
+`opengraph-image.tsx` renders the share card for the homepage, and
+`work/[slug]/opengraph-image.tsx` renders one per case study from that project's own
+title, premise and stack — so a shared case-study link previews as itself rather than
+as a generic site card. Both are generated with `ImageResponse` and prerendered at
+build time; the fonts are bundled in `assets/` so rendering never depends on the
+network.
+
 ## The glass box
 
 The centrepiece is an interactive demo that reproduces the hybrid retrieval pipeline
