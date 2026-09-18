@@ -99,11 +99,24 @@ export function cosine(a: Float32Array, b: Float32Array): number {
   return dot / Math.sqrt(aa * bb);
 }
 
-/** First `count` components, for the vector visualisation in the UI. */
+/**
+ * A `count`-column view of the whole vector for the UI, each column being the
+ * signed peak of one contiguous slice. Hashed vectors are sparse, so plotting
+ * the raw first 32 components would show mostly zeros and say nothing; this
+ * folds all EMBED_DIM components into the plot without inventing any value —
+ * every bar drawn is an actual component of the actual vector.
+ */
 export function vectorPreview(vector: Float32Array, count = 32): number[] {
+  const slice = Math.max(1, Math.ceil(vector.length / count));
   const out: number[] = [];
-  for (let i = 0; i < Math.min(count, vector.length); i += 1) {
-    out.push(Number(vector[i].toFixed(4)));
+
+  for (let start = 0; start < vector.length; start += slice) {
+    let peak = 0;
+    for (let i = start; i < Math.min(start + slice, vector.length); i += 1) {
+      if (Math.abs(vector[i]) > Math.abs(peak)) peak = vector[i];
+    }
+    out.push(Number(peak.toFixed(4)));
   }
+
   return out;
 }

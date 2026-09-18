@@ -114,6 +114,9 @@
     mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 20%, transparent 75%);
   }
 
+  /* Anchor targets must clear the fixed nav, or headings land underneath it. */
+  [id] { scroll-margin-top: 6rem; }
+
   .text-balance { text-wrap: balance; }
   .text-pretty { text-wrap: pretty; }
 

@@ -138,7 +138,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "Exact constraints, not approximate ones",
         problem:
-          "Pure vector search treats \"under 6 lakh\" as a direction, not a boundary. It will happily return a ₹6.4L car because the sentence embedding is close. For a price ceiling, close is wrong.",
+          "Pure vector search treats “under 6 lakh” as a direction, not a boundary. It will happily return a ₹6.4L car because the sentence embedding is close. For a price ceiling, close is wrong.",
         solution:
           "Semantic search narrows to candidates by meaning; a SQL WHERE clause then enforces price and year as hard predicates. The two run fused, not sequentially bolted together.",
         insight:
@@ -303,7 +303,7 @@ export const caseStudies: CaseStudy[] = [
       {
         title: "The schema is the workflow",
         problem:
-          "The naive model is a donor record with an `approved` boolean — which loses when the state changed, who moved it, and every state that isn't binary.",
+          "The naive model is a donor record with an “approved” boolean — which loses when the state changed, who moved it, and every state that isn't binary.",
         solution:
           "Donors were modelled around an explicit status workflow with a timestamp per transition, making the drive's history queryable rather than inferred.",
         insight:

@@ -72,11 +72,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
+    // The font variables must live on <html>, not <body>. The @theme block
+    // defines --font-sans/-mono/-serif at :root in terms of these; if they are
+    // only defined on <body>, those references are unresolvable at :root and
+    // compute to invalid, and inheritance passes the invalid value down rather
+    // than re-resolving it — so every font silently falls back to system.
+    <html
+      lang="en"
+      data-theme="dark"
+      className={`${grotesk.variable} ${mono.variable} ${editorial.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <ThemeScript />
       </head>
-      <body className={`${grotesk.variable} ${mono.variable} ${editorial.variable} grain`}>
+      <body className="grain">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-[var(--color-signal)] focus:px-4 focus:py-2 focus:font-mono focus:text-sm focus:text-[#0a0a0b]"

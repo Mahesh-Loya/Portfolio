@@ -27,7 +27,9 @@ export function Hero() {
           WebkitMaskImage: "linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%)",
         }}
       >
-        <ShaderField className="absolute inset-0" />
+        {/* Held back so the resolved waveform reads as texture behind the
+            type rather than competing with it for the same space. */}
+        <ShaderField className="absolute inset-0 opacity-[0.55]" />
       </div>
 
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 pb-16 pt-32 sm:px-8 sm:pt-36">
@@ -82,7 +84,9 @@ export function Hero() {
         </h1>
 
         {/* Role / place, set as structural metadata. */}
-        <p data-reveal data-reveal-delay="220" className="label mt-6">
+        {/* Sits over the brightest part of the shader, so it needs more
+            contrast than the default label grey. */}
+        <p data-reveal data-reveal-delay="220" className="label mt-6 text-muted">
           {profile.role} <span className="text-line-bright">/</span> {profile.location}
         </p>
 
