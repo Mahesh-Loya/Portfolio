@@ -65,7 +65,7 @@ export type CaseStudy = {
 export const caseStudies: CaseStudy[] = [
   {
     slug: "vyavsay-assist",
-    live: "https://vyavsay-assist.vercel.app",
+    live: "https://vyavsayassist.app",
     repo: "https://github.com/Mahesh-Loya/Vyavsay_Assist",
     title: "Vyavsay Assist",
     kicker: "An AI sales copilot in daily use at a car dealership",
@@ -253,6 +253,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "blood-donation-drive",
+    live: "https://bdd.pictoreal.in",
     title: "Blood Donation Drive Management System",
     kicker: "Paper queues replaced by a workflow, live at PICT",
     period: "2025",

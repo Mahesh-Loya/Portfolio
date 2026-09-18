@@ -77,6 +77,19 @@ function ReadLink({ slug }: { slug: string }) {
   );
 }
 
+/** Marks a case study that is actually deployed — the strongest signal on the card. */
+function LiveTag() {
+  return (
+    <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.16em] text-signal uppercase">
+      <span className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-signal" />
+      </span>
+      Live
+    </span>
+  );
+}
+
 /** Entry 01 — the hero. More air, bigger type, the premise given the page. */
 function HeroEntry({ study, index }: { study: CaseStudy; index: number }) {
   return (
@@ -91,6 +104,7 @@ function HeroEntry({ study, index }: { study: CaseStudy; index: number }) {
           &#183;
         </span>
         <span className="label">{study.role}</span>
+        {study.live ? <LiveTag /> : null}
       </div>
 
       <h3 className="mt-6 text-balance text-4xl leading-[0.98] tracking-tight text-bone sm:text-5xl lg:text-6xl">
@@ -138,6 +152,7 @@ function RowEntry({
               {String(index + 1).padStart(2, "0")}
             </span>
             <span className="label">{study.period}</span>
+            {study.live ? <LiveTag /> : null}
           </div>
           <h3 className="mt-4 text-balance text-2xl leading-tight tracking-tight text-bone sm:text-3xl">
             <Link
