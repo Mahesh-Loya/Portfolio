@@ -57,12 +57,16 @@ export type CaseStudy = {
     solution: string;
     insight: string;
   }[];
+  /** Only set these when the link has been checked — a dead link costs more than none. */
   live?: string;
+  repo?: string;
 };
 
 export const caseStudies: CaseStudy[] = [
   {
     slug: "vyavsay-assist",
+    live: "https://vyavsay-assist.vercel.app",
+    repo: "https://github.com/Mahesh-Loya/Vyavsay_Assist",
     title: "Vyavsay Assist",
     kicker: "An AI sales copilot in daily use at a car dealership",
     period: "Feb 2026 — Present",

@@ -171,6 +171,22 @@ export default async function CaseStudyPage({ params }: Params) {
                 </span>
               </a>
             ) : null}
+            {study.repo ? (
+              <a
+                href={study.repo}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="group inline-flex items-center gap-2 border-b border-line-bright pb-0.5 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-bone"
+              >
+                Source
+                <span
+                  aria-hidden="true"
+                  className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                >
+                  &#8599;
+                </span>
+              </a>
+            ) : null}
           </div>
         </header>
 
