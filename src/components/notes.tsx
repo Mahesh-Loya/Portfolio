@@ -24,7 +24,7 @@ export function Notes() {
     >
       <div className="mx-auto max-w-6xl">
         <header className="max-w-2xl" data-reveal>
-          <p className="label">02 — Engineering notes</p>
+          <p className="label">Engineering notes</p>
           <h2
             id="notes-heading"
             className="mt-4 text-3xl tracking-[-0.03em] sm:text-4xl"
