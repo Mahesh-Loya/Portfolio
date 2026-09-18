@@ -12,7 +12,7 @@ export const profile = {
   phone: "7620851007",
   github: "https://github.com/Mahesh-Loya",
   githubHandle: "Mahesh-Loya",
-  linkedin: "https://www.linkedin.com/in/mahesh-loya",
+  linkedin: "https://www.linkedin.com/in/maheshloya",
   resumeUrl: "/mahesh-loya-resume.pdf",
   summary:
     "Final-year B.E. Information Technology student building AI-native software with real-world impact — owning products end to end, from architecture and data modelling through deployment and the iteration after launch.",
