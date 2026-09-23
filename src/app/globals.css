@@ -133,6 +133,25 @@
     height: 1px;
     background: linear-gradient(to right, var(--color-line-bright), transparent);
   }
+
+  /* Floating chrome only. Translucency is justified where real content moves
+     underneath it — the nav, the palette, the demo query bar — and nowhere else.
+     The inset hairline is the edge, catching light; not a frosted card. */
+  .glass {
+    background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--color-line);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.055);
+  }
+
+  /* No blur support means the background is doing all the work, so it has to
+     be nearly opaque or the text underneath reads through it. */
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass {
+      background: color-mix(in srgb, var(--color-surface) 97%, transparent);
+    }
+  }
 }
 
 /* Shared entrance animation, driven by IntersectionObserver via [data-reveal]. */

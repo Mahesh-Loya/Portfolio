@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArchitectureDiagram } from "@/components/architecture-diagram";
+import { ProductShot } from "@/components/product-shot";
 import type { CaseStudy } from "@/content/site";
 import { caseStudies } from "@/content/site";
 
@@ -190,8 +191,16 @@ export default async function CaseStudyPage({ params }: Params) {
           </div>
         </header>
 
+        {/* ── the shipped thing ───────────────────────────────────── */}
+        {study.shot ? (
+          <figure className="mt-20 md:mt-24" data-reveal>
+            <ProductShot src={study.shot.src} alt={study.shot.alt} priority />
+            <figcaption className="label mt-5">The shipped product</figcaption>
+          </figure>
+        ) : null}
+
         {/* ── context ─────────────────────────────────────────────── */}
-        <section className="mt-28 md:mt-36" data-reveal>
+        <section className={study.shot ? "mt-20 md:mt-28" : "mt-28 md:mt-36"} data-reveal>
           <SectionLabel>Context</SectionLabel>
           <p className="max-w-[68ch] text-pretty text-lg leading-[1.75] text-muted md:text-xl md:leading-[1.7]">
             {study.context}

@@ -1,17 +1,13 @@
 import { achievements, education, leadership } from "@/content/site";
 
-function ColumnHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mb-5">
-      <p className="label">{children}</p>
-      <div className="rule mt-2" />
-    </div>
-  );
-}
-
+/**
+ * The about section. Deliberately not a résumé: one paragraph in his own voice,
+ * one result that actually matters, and two supporting lines. Anything that
+ * only existed to fill a CV column was cut rather than restyled.
+ */
 export function Credentials() {
   const major = achievements.find((entry) => entry.weight === "major");
-  const minor = achievements.filter((entry) => entry.weight !== "major");
+  const school = education[0];
 
   return (
     <section id="about" className="relative mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 md:py-32">
@@ -19,89 +15,79 @@ export function Credentials() {
         About
       </p>
 
-      <div className="mt-6 grid gap-x-12 gap-y-10 md:grid-cols-12">
-        <div data-reveal className="md:col-span-7">
-          <p className="max-w-xl text-pretty font-serif text-2xl leading-[1.35] text-bone sm:text-3xl">
-            I&apos;m in my final year of B.E. Information Technology at PICT, Pune. I build AI
-            systems end to end — architecture, data modelling, deployment, and the iteration after
-            launch.
-          </p>
-          <p className="mt-5 max-w-lg text-pretty text-[15px] leading-relaxed text-muted">
-            Most of what I know came from putting something in front of real users and watching
-            where it broke.
-          </p>
-        </div>
-
-        {/* The one result worth elevating above everything else here. */}
-        {major ? (
-          <div
-            data-reveal
-            data-reveal-delay="100"
-            className="border border-line-bright bg-surface p-6 md:col-span-5"
-          >
-            <div className="flex items-center gap-2">
-              <span aria-hidden="true" className="h-1.5 w-1.5 bg-signal" />
-              <p className="label">Recognition</p>
-            </div>
-            <h3 className="mt-4 font-sans text-xl font-medium tracking-tight text-bone">
-              {major.title}
-            </h3>
-            <p className="mt-2.5 text-pretty text-[14.5px] leading-relaxed text-muted">
-              {major.detail}
-            </p>
-          </div>
-        ) : null}
+      <div data-reveal className="mt-8 max-w-[36rem]">
+        <p className="text-pretty font-serif text-[27px] leading-[1.32] text-bone sm:text-[32px]">
+          I&apos;m in my final year of B.E. Information Technology at PICT, Pune. I build AI systems
+          end to end — architecture, data modelling, deployment — and then keep working on them once
+          real people are using them.
+        </p>
+        <p className="mt-6 max-w-md text-pretty text-[15px] leading-relaxed text-muted">
+          A car dealership in Pune runs one of them every day. Most of what I know came from putting
+          something in front of users like that and watching where it broke.
+        </p>
       </div>
 
-      <div className="mt-16 grid gap-x-12 gap-y-12 md:grid-cols-12">
-        <div data-reveal className="md:col-span-5">
-          <ColumnHeading>Education</ColumnHeading>
-          <ol className="border-l border-line">
-            {education.map((entry) => (
-              <li key={entry.institution} className="relative pb-6 pl-5 last:pb-0">
-                <span
-                  aria-hidden="true"
-                  className="absolute left-[-3px] top-[7px] h-[5px] w-[5px] rotate-45 border border-line-bright bg-void"
-                />
-                <p className="label">{entry.period}</p>
-                <p className="mt-1.5 font-sans text-[15px] text-bone">{entry.credential}</p>
-                <p className="mt-0.5 text-[14px] text-muted">{entry.institution}</p>
-                <p className="mt-1 font-mono text-[12px] text-faint">{entry.detail}</p>
-                {entry.coursework ? (
-                  <p className="mt-2 max-w-sm text-pretty text-[12.5px] leading-relaxed text-faint">
-                    {entry.coursework}
-                  </p>
-                ) : null}
-              </li>
-            ))}
-          </ol>
-        </div>
+      {/* The one result worth setting in type. */}
+      {major ? (
+        <div data-reveal data-reveal-delay="120" className="mt-16 sm:mt-20">
+          <div className="flex items-center gap-2">
+            <span aria-hidden="true" className="h-1.5 w-1.5 bg-signal" />
+            <p className="label">Recognition</p>
+          </div>
+          <div className="rule mt-3" />
 
-        <div data-reveal data-reveal-delay="80" className="md:col-span-3">
-          <ColumnHeading>Also</ColumnHeading>
-          <ul>
-            {minor.map((entry) => (
-              <li key={entry.title} className="border-b border-line py-3 first:pt-0 last:border-b-0">
-                <p className="font-sans text-[14.5px] text-bone">{entry.title}</p>
-                <p className="mt-1 text-pretty text-[13px] leading-relaxed text-muted">
-                  {entry.detail}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-baseline sm:gap-10">
+            {major.figure ? (
+              <p className="font-mono text-[46px] leading-none tracking-tight text-signal sm:shrink-0 sm:text-[68px]">
+                {major.figure}
+              </p>
+            ) : null}
+            <div className="max-w-md">
+              <h3 className="font-sans text-[21px] font-medium leading-snug tracking-tight text-bone sm:text-[24px]">
+                {major.title}
+              </h3>
+              <p className="mt-2.5 text-pretty text-[15px] leading-relaxed text-muted">
+                {major.detail}
+              </p>
+            </div>
+          </div>
         </div>
+      ) : null}
 
-        <div data-reveal data-reveal-delay="160" className="md:col-span-4">
-          <ColumnHeading>Leadership</ColumnHeading>
-          <ul>
+      {/* One degree, one line. */}
+      {school ? (
+        <div
+          data-reveal
+          data-reveal-delay="180"
+          className="mt-16 border-t border-line pt-6 sm:mt-20"
+        >
+          <div className="flex flex-col gap-x-8 gap-y-2 sm:flex-row sm:items-baseline">
+            <p className="label sm:w-28 sm:shrink-0">Education</p>
+            <p className="flex-1 font-sans text-[15px] text-bone">
+              {school.credential}
+              <span className="text-muted"> · {school.institution}</span>
+            </p>
+            <p className="font-mono text-[12px] text-faint sm:shrink-0">
+              {school.detail} · {school.period}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      <div data-reveal data-reveal-delay="240" className="mt-10 border-t border-line pt-6">
+        <div className="flex flex-col gap-x-8 gap-y-4 sm:flex-row">
+          <p className="label sm:w-28 sm:shrink-0 sm:pt-0.5">Leadership</p>
+          <ul className="flex-1 space-y-5">
             {leadership.map((entry) => (
-              <li key={entry.role} className="border-b border-line py-3 first:pt-0 last:border-b-0">
-                <div className="flex items-baseline justify-between gap-4">
-                  <p className="font-sans text-[14.5px] text-bone">{entry.role}</p>
+              <li key={entry.role}>
+                <div className="flex flex-col gap-x-6 gap-y-0.5 sm:flex-row sm:items-baseline sm:justify-between">
+                  <p className="font-sans text-[15px] text-bone">
+                    {entry.role}
+                    <span className="text-faint"> · {entry.org}</span>
+                  </p>
                   <p className="label shrink-0">{entry.period}</p>
                 </div>
-                <p className="mt-0.5 font-mono text-[12px] text-faint">{entry.org}</p>
-                <p className="mt-1.5 text-pretty text-[13px] leading-relaxed text-muted">
+                <p className="mt-1.5 max-w-lg text-pretty text-[13px] leading-relaxed text-faint">
                   {entry.detail}
                 </p>
               </li>

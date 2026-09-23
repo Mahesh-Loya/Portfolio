@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CaseStudy } from "@/content/site";
 import { caseStudies } from "@/content/site";
+import { ProductShot } from "./product-shot";
 
 const VISIBLE_STACK = 5;
 
@@ -118,6 +119,11 @@ function HeroEntry({ study, index }: { study: CaseStudy; index: number }) {
       </h3>
       <p className="mt-4 max-w-[46ch] text-pretty text-lg text-muted">{study.kicker}</p>
 
+      {/* The first proof a visitor sees: the product itself, at full measure. */}
+      {study.shot ? (
+        <ProductShot src={study.shot.src} alt={study.shot.alt} className="mt-12 md:mt-14" />
+      ) : null}
+
       <div className="mt-12 grid gap-10 border-t border-line pt-10 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
         <blockquote className="max-w-[34ch] font-serif text-2xl leading-[1.28] text-balance text-bone sm:text-3xl">
           {study.premise}
@@ -132,7 +138,14 @@ function HeroEntry({ study, index }: { study: CaseStudy; index: number }) {
   );
 }
 
-/** Entries 02–03 — tighter rows. The third mirrors the second. */
+/**
+ * Entries 02–03 — tighter rows. The third mirrors the second.
+ *
+ * An entry with a screenshot splits 5 / 6 and leads its wide column with the
+ * image. An entry without one isn't the same layout missing a picture: it
+ * narrows the text column and gives the premise the extra measure, so the
+ * absence reads as a typographic choice rather than a gap.
+ */
 function RowEntry({
   study,
   index,
@@ -142,11 +155,19 @@ function RowEntry({
   index: number;
   mirrored: boolean;
 }) {
+  const shot = study.shot;
+
   return (
     <article className="group relative" data-reveal data-reveal-delay="80">
       <div className="rule mb-8" />
       <div className="grid gap-8 lg:grid-cols-12 lg:gap-14">
-        <div className={`lg:col-span-5 ${mirrored ? "lg:order-2 lg:col-start-8" : ""}`}>
+        <div
+          className={
+            shot
+              ? `lg:col-span-5 ${mirrored ? "lg:order-2 lg:col-start-8" : ""}`
+              : `lg:col-span-4 ${mirrored ? "lg:order-2 lg:col-start-9" : ""}`
+          }
+        >
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <span className="font-mono text-[11px] tracking-[0.16em] text-faint">
               {String(index + 1).padStart(2, "0")}
@@ -170,8 +191,21 @@ function RowEntry({
           </div>
         </div>
 
-        <div className={`lg:col-span-6 ${mirrored ? "lg:order-1 lg:col-start-1" : "lg:col-start-7"}`}>
-          <blockquote className="max-w-[40ch] border-l border-line-bright pl-5 font-serif text-xl leading-[1.35] text-bone sm:text-2xl">
+        <div
+          className={
+            shot
+              ? `lg:col-span-6 ${mirrored ? "lg:order-1 lg:col-start-1" : "lg:col-start-7"}`
+              : `lg:col-span-7 ${mirrored ? "lg:order-1 lg:col-start-1" : "lg:col-start-6"}`
+          }
+        >
+          {shot ? <ProductShot src={shot.src} alt={shot.alt} className="mb-8" /> : null}
+          <blockquote
+            className={`border-l border-line-bright pl-5 font-serif leading-[1.35] text-bone ${
+              shot
+                ? "max-w-[40ch] text-xl sm:text-2xl"
+                : "max-w-[34ch] text-balance text-2xl sm:text-3xl"
+            }`}
+          >
             {study.premise}
           </blockquote>
           <div className="mt-8 border-t border-line pt-6">

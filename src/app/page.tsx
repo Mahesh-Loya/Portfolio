@@ -4,6 +4,7 @@ import { SignalStrip } from "@/components/signal-strip";
 import GlassBox from "@/components/glass-box";
 import { CaseStudies } from "@/components/case-studies";
 import { Notes } from "@/components/notes";
+import { BuildLog } from "@/components/build-log";
 import { CapabilityMap } from "@/components/capability-map";
 import { Credentials } from "@/components/credentials";
 import { Contact } from "@/components/contact";
@@ -24,6 +25,7 @@ export default function Home() {
         {/* The record. */}
         <CaseStudies />
         <Notes />
+        <BuildLog />
         <CapabilityMap />
         <Credentials />
         <Contact />

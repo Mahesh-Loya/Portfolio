@@ -357,7 +357,7 @@ export function CommandPalette() {
             aria-modal="true"
             aria-label="Command palette"
             onKeyDown={onDialogKeyDown}
-            className="relative flex w-full max-w-xl flex-col overflow-hidden rounded-md border border-line-bright bg-surface shadow-2xl shadow-black/40"
+            className="glass relative flex w-full max-w-xl flex-col overflow-hidden rounded-md shadow-2xl shadow-black/40"
             initial={{ opacity: 0, y: reduceMotion ? 0 : -8, scale: reduceMotion ? 1 : 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: reduceMotion ? 0 : -6, scale: reduceMotion ? 1 : 0.99 }}

@@ -87,7 +87,7 @@ export function Nav() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-[120] transition-colors duration-300 ${
-        solid ? "border-b border-line bg-void/80 backdrop-blur-md" : "border-b border-transparent bg-transparent"
+        solid ? "glass border-x-0! border-t-0!" : "border-b border-transparent bg-transparent"
       }`}
     >
       <nav aria-label="Primary" className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
@@ -146,7 +146,7 @@ export function Nav() {
       <div
         id="nav-mobile-menu"
         hidden={!menuOpen}
-        className="border-t border-line bg-void/95 backdrop-blur-md md:hidden"
+        className="border-t border-line md:hidden"
       >
         <ul className="mx-auto max-w-6xl px-5 py-2 sm:px-8">
           {SECTIONS.map((section) => (

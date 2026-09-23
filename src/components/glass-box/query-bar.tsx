@@ -35,7 +35,7 @@ export function QueryBar({
     <div>
       <form
         onSubmit={handleSubmit}
-        className="flex items-stretch border border-line-bright bg-raised transition-colors focus-within:border-[var(--color-signal)]"
+        className="glass flex items-stretch transition-colors focus-within:border-[var(--color-signal)]"
       >
         <span className="label hidden items-center border-r border-line px-4 sm:flex">Ask</span>
         <label htmlFor="glass-box-query" className="sr-only">

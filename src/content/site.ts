@@ -60,11 +60,17 @@ export type CaseStudy = {
   /** Only set these when the link has been checked — a dead link costs more than none. */
   live?: string;
   repo?: string;
+  /** A real screenshot of the shipped product. Proof beats description. */
+  shot?: { src: string; alt: string };
 };
 
 export const caseStudies: CaseStudy[] = [
   {
     slug: "vyavsay-assist",
+    shot: {
+      src: "/shots/vyavsay-desktop.jpg",
+      alt: "The VyavsayAssist product page, showing a WhatsApp conversation in Hinglish where a customer asks a car's price and the assistant books a test drive.",
+    },
     live: "https://vyavsayassist.app",
     repo: "https://github.com/Mahesh-Loya/Vyavsay_Assist",
     title: "Vyavsay Assist",
@@ -253,6 +259,10 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "blood-donation-drive",
+    shot: {
+      src: "/shots/bdd-desktop.jpg",
+      alt: "The live blood donation platform, showing per-year donor totals and a live blood-group inventory broken down by group.",
+    },
     live: "https://bdd.pictoreal.in",
     title: "Blood Donation Drive Management System",
     kicker: "Paper queues replaced by a workflow, live at PICT",
@@ -360,42 +370,32 @@ export const education = [
     coursework:
       "Data Structures & Algorithms, DBMS, Operating Systems, Computer Networks, OOP",
   },
-  {
-    institution: "Marathwada High School & Junior College",
-    credential: "HSC (Class XII)",
-    detail: "76.67%",
-    period: "2023",
-  },
-  {
-    institution: "Oasis's English School",
-    credential: "SSC (Class X)",
-    detail: "100%",
-    period: "2021",
-  },
 ];
 
-export const achievements = [
+export type Achievement = {
+  title: string;
+  detail: string;
+  /** The headline number, when the result has one worth setting in type. */
+  figure?: string;
+  weight: "major" | "minor";
+};
+
+export const achievements: Achievement[] = [
   {
     title: "Winner — MVPM Hackathon 2026",
-    detail:
-      "1st prize of ₹1,00,000 for Vyavsay Assist, an AI WhatsApp sales copilot for Indian SMBs.",
-    weight: "major" as const,
+    detail: "First prize for Vyavsay Assist, an AI WhatsApp sales copilot for Indian SMBs.",
+    figure: "₹1,00,000",
+    weight: "major",
   },
   {
     title: "Best Event Coordinator — Pictofest 2025",
     detail: "Awarded for directing the festival's event operations.",
-    weight: "minor" as const,
+    weight: "minor",
   },
   {
     title: "Competitive programming",
     detail: "2-Star on CodeChef · 100+ DSA problems solved on LeetCode.",
-    weight: "minor" as const,
-  },
-  {
-    title: "Certifications",
-    detail:
-      "DeepLearning.AI Vector Databases · Claude 101 · Full Stack Web Development · Mastering DSA.",
-    weight: "minor" as const,
+    weight: "minor",
   },
 ];
 
@@ -412,5 +412,83 @@ export const leadership = [
     org: "Pictoreal, PICT Pune",
     period: "Jul 2025 — Present",
     detail: "Lead the media team and mentor junior photographers.",
+  },
+];
+
+export type BuildLogEntry = {
+  name: string;
+  blurb: string;
+  tech: string[];
+  repo?: string;
+  live?: string;
+  shot?: { src: string; alt: string };
+  /** Featured entries get a larger cell in the grid. */
+  featured?: boolean;
+};
+
+/**
+ * Selected work beyond the three case studies. Curated rather than a dump of
+ * every repository — and every blurb is drawn from the project's own README,
+ * never invented.
+ */
+export const buildLog: BuildLogEntry[] = [
+  {
+    name: "BA Support Agent",
+    blurb:
+      "Given an inbound customer tweet, it classifies intent, drafts a reply grounded in how the airline actually resolved similar issues before, and then decides whether that reply is safe to send automatically or belongs with a human — stating its reason either way. Built on ~3M tweets from the Kaggle customer-support dataset.",
+    tech: ["Python", "LLM", "RAG", "Classification"],
+    repo: "https://github.com/Mahesh-Loya/ba-support-agent",
+    featured: true,
+  },
+  {
+    name: "The Loyalty Card",
+    blurb:
+      "A bakery loyalty card whose stamps can only be written against a server-verified identity — never against anything the browser claims about itself. The ten-stamp cap is enforced by the database rather than by a check a bug could skip.",
+    tech: ["TypeScript", "Privy", "Auth"],
+    repo: "https://github.com/Mahesh-Loya/The-Loyalty-Card",
+    featured: true,
+  },
+  {
+    name: "Anvesha",
+    blurb:
+      "The digital edition of Pictoreal Volume 28, built and shipped for the college media team I lead.",
+    tech: ["JavaScript", "Vercel"],
+    repo: "https://github.com/Mahesh-Loya/anvesha-pictoreal",
+    live: "https://anvesha-pictoreal.vercel.app",
+    shot: {
+      src: "/shots/anvesha-desktop.jpg",
+      alt: "The Anvesha digital publication homepage.",
+    },
+  },
+  {
+    name: "Agri-Assist",
+    blurb:
+      "A MERN application with a Flask API behind it: one module predicts plant disease from crop images, another gives farmers a marketplace to sell yield directly.",
+    tech: ["React", "Node.js", "Flask", "ML"],
+    repo: "https://github.com/Mahesh-Loya/Agri-Assist-Project",
+  },
+];
+
+/** Smaller repositories, listed as facts only — no invented descriptions. */
+export const alsoOnGithub: { name: string; language: string; repo: string }[] = [
+  {
+    name: "invoice_extractor",
+    language: "Python",
+    repo: "https://github.com/Mahesh-Loya/invoice_extractor",
+  },
+  {
+    name: "job-critique",
+    language: "Python",
+    repo: "https://github.com/Mahesh-Loya/job-critique",
+  },
+  {
+    name: "Hostel-Finder",
+    language: "JavaScript",
+    repo: "https://github.com/Mahesh-Loya/Hostel-Finder",
+  },
+  {
+    name: "Lab_Management_System",
+    language: "JavaScript",
+    repo: "https://github.com/Mahesh-Loya/Lab_Management_System",
   },
 ];
