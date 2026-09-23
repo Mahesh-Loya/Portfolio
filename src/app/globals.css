@@ -17,7 +17,8 @@
   /* Ink */
   --color-bone: #edede8;
   --color-muted: #a1a1a6;
-  --color-faint: #6b6b72;
+  /* 4.78:1 on the dark canvas — AA for small text, which .label and chips use. */
+  --color-faint: #7c7c84;
 
   /* Single accent — acid lime. Deliberately not default-LLM purple. */
   --color-signal: #c6f24e;
@@ -47,7 +48,8 @@
   --color-line-bright: #cfcfc7;
   --color-bone: #141414;
   --color-muted: #55555c;
-  --color-faint: #86868e;
+  /* 4.81:1 on the light canvas. */
+  --color-faint: #6f6f77;
   --color-signal: #5c7a12;
   --color-signal-dim: #7f9c33;
   --color-signal-glow: #5c7a1214;

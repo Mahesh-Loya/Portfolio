@@ -27,6 +27,8 @@ export const profile = {
   github: "https://github.com/Mahesh-Loya",
   githubHandle: "Mahesh-Loya",
   linkedin: "https://www.linkedin.com/in/maheshloya",
+  /** Derived label, so the visible handle can never drift from the href again. */
+  linkedinHandle: "in/maheshloya",
   resumeUrl: "/mahesh-loya-resume.pdf",
   summary:
     "Final-year B.E. Information Technology student building AI-native software with real-world impact — owning products end to end, from architecture and data modelling through deployment and the iteration after launch.",

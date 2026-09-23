@@ -100,7 +100,7 @@ export function Nav() {
       }`}
     >
       <nav aria-label="Primary" className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-5 sm:gap-4 sm:px-8">
-        <a href="#top" className="group flex min-w-0 items-center gap-2.5" aria-label={`${profile.name}, back to top`}>
+        <a href="#top" className="group flex min-w-0 items-center gap-2.5">
           <span
             aria-hidden="true"
             className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-line-bright font-mono text-[10px] leading-none text-muted transition-colors group-hover:border-signal group-hover:text-signal"
@@ -111,6 +111,7 @@ export function Nav() {
           <span className="hidden truncate font-sans text-[15px] font-medium tracking-tight text-bone min-[360px]:inline">
             {profile.name}
           </span>
+          <span className="sr-only">{profile.name} — back to top</span>
         </a>
 
         <div className="hidden items-center gap-1 md:flex">
@@ -147,7 +148,7 @@ export function Nav() {
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent(PALETTE_OPEN_EVENT))}
-            aria-label="Open command palette"
+            aria-label={`${isMac ? "⌘" : "Ctrl"} K — open command palette`}
             className="hidden h-9 items-center gap-1.5 rounded-sm border border-line px-2.5 font-mono text-[11px] text-faint transition-colors hover:border-line-bright hover:text-muted md:inline-flex"
           >
             <span aria-hidden="true">{isMac ? "⌘" : "Ctrl"}</span>

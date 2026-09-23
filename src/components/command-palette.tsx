@@ -160,7 +160,7 @@ export function CommandPalette() {
         },
       },
       { id: "github", group: "Connect", label: "Open GitHub", hint: profile.githubHandle, keywords: "code source repos", run: () => openExternal(profile.github) },
-      { id: "linkedin", group: "Connect", label: "Open LinkedIn", hint: "in/mahesh-loya", keywords: "profile network", run: () => openExternal(profile.linkedin) },
+      { id: "linkedin", group: "Connect", label: "Open LinkedIn", hint: profile.linkedinHandle, keywords: "profile network", run: () => openExternal(profile.linkedin) },
       {
         id: "resume",
         group: "Connect",

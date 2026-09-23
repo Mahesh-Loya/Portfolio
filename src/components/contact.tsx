@@ -30,7 +30,7 @@ const MAILTO = `mailto:${profile.email}?subject=Project%20enquiry`;
 
 const LINKS = [
   { label: "GitHub", href: profile.github, hint: profile.githubHandle, download: false },
-  { label: "LinkedIn", href: profile.linkedin, hint: "in/mahesh-loya", download: false },
+  { label: "LinkedIn", href: profile.linkedin, hint: profile.linkedinHandle, download: false },
   { label: "Resume", href: profile.resumeUrl, hint: "PDF", download: true },
 ];
 
