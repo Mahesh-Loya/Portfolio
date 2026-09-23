@@ -144,8 +144,20 @@ function Footer({ right }: { right: string }) {
   );
 }
 
-/** The homepage card: the thesis, given the whole frame. */
-export function HomeCard({ thesis, role }: { thesis: string; role: string }) {
+/**
+ * The homepage card. This is what a recruiter or a prospective client sees in a
+ * LinkedIn or WhatsApp feed, so it leads with what he builds rather than with
+ * the thesis, which reads well but tells a stranger nothing.
+ */
+export function HomeCard({
+  headline,
+  sub,
+  role,
+}: {
+  headline: string;
+  sub: string;
+  role: string;
+}) {
   return (
     <Shell>
       <Header eyebrow="Full-stack & AI engineer" />
@@ -153,13 +165,13 @@ export function HomeCard({ thesis, role }: { thesis: string; role: string }) {
         <div
           style={{
             fontFamily: "Serif",
-            fontSize: 92,
-            lineHeight: 1.04,
+            fontSize: 78,
+            lineHeight: 1.06,
             color: BONE,
             letterSpacing: -1,
           }}
         >
-          {thesis}
+          {headline}
         </div>
         <div
           style={{
@@ -170,8 +182,7 @@ export function HomeCard({ thesis, role }: { thesis: string; role: string }) {
             maxWidth: 780,
           }}
         >
-          Voice pipelines, retrieval over live inventory, and AI products in daily
-          production use.
+          {sub}
         </div>
       </div>
       <Footer right={role} />

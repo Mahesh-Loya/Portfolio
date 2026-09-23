@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     template: "%s · Mahesh Loya",
   },
   description:
-    "I build AI-native systems that turn noisy reality into structured action — voice pipelines, retrieval over live inventory, and products that ship.",
+    "I build AI products that businesses actually use — WhatsApp assistants that handle voice notes and photos, voice agents that answer the phone, and search over your own data.",
   keywords: [
     "Mahesh Loya",
     "AI engineer",
@@ -48,14 +48,14 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: "Mahesh Loya — AI systems engineer",
     description:
-      "I make noisy reality machine-readable. Voice pipelines, retrieval systems, and AI products in daily production use.",
+      "WhatsApp assistants, real-time voice agents, and retrieval over live data — shipped and in daily production use.",
     siteName: "Mahesh Loya",
   },
   twitter: {
     card: "summary_large_image",
     title: "Mahesh Loya — AI systems engineer",
     description:
-      "I make noisy reality machine-readable. Voice pipelines, retrieval systems, and AI products in daily production use.",
+      "WhatsApp assistants, real-time voice agents, and retrieval over live data — shipped and in daily production use.",
   },
   robots: { index: true, follow: true },
 };

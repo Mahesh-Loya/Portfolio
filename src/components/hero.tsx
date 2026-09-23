@@ -10,6 +10,24 @@ const NAME_CHARS = Array.from(profile.name);
 const CHAR_STEP = 0.03;
 const CHAR_DURATION = 0.52;
 
+/**
+ * The clause a stranger has to leave with. It is split out of the pitch at
+ * render time rather than stored as two fields, so the copy stays one readable
+ * sentence in content — and if it is ever rewritten, the fallback prints the
+ * pitch unchanged instead of dropping half of it.
+ */
+const PITCH_EMPHASIS = "AI products that businesses actually use";
+
+const pitchIndex = profile.pitch.indexOf(PITCH_EMPHASIS);
+const pitchParts =
+  pitchIndex === -1
+    ? { before: profile.pitch, emphasis: "", after: "" }
+    : {
+        before: profile.pitch.slice(0, pitchIndex),
+        emphasis: PITCH_EMPHASIS,
+        after: profile.pitch.slice(pitchIndex + PITCH_EMPHASIS.length),
+      };
+
 export function Hero() {
   const reduced = useReducedMotion();
 
@@ -29,13 +47,13 @@ export function Hero() {
       >
         {/* Held back so the resolved waveform reads as texture behind the
             type rather than competing with it for the same space. */}
-        <ShaderField className="absolute inset-0 opacity-[0.55]" />
+        <ShaderField className="absolute inset-0 opacity-[0.42]" />
       </div>
 
-      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 pb-16 pt-32 sm:px-8 sm:pt-36">
-        {/* Availability */}
-        <div data-reveal className="w-fit">
-          <div className="flex items-center gap-2.5 rounded-full border border-line bg-surface/70 py-1.5 pl-3 pr-4 backdrop-blur-sm">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 pb-14 pt-28 sm:px-8 sm:pb-16 sm:pt-36">
+        {/* Availability — a statement of fact, not a sales line. */}
+        <div data-reveal className="w-fit max-w-full">
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-2xl border border-line bg-surface/70 py-1.5 pl-3 pr-4 backdrop-blur-sm sm:rounded-full">
             <span className="relative flex h-1.5 w-1.5 shrink-0">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-signal" />
@@ -43,7 +61,7 @@ export function Hero() {
             <span className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-bone">
               {profile.status.label}
             </span>
-            <span aria-hidden className="h-3 w-px bg-line-bright" />
+            <span aria-hidden className="hidden h-3 w-px bg-line-bright sm:block" />
             <span className="font-mono text-[0.6875rem] text-faint">
               {profile.status.detail}
             </span>
@@ -53,7 +71,7 @@ export function Hero() {
         {/* Name — the dominant typographic element. */}
         <h1
           aria-label={profile.name}
-          className="mt-9 font-sans font-medium leading-[0.86] tracking-[-0.04em] text-bone sm:mt-11"
+          className="mt-8 font-sans font-medium leading-[0.86] tracking-[-0.04em] text-bone sm:mt-11"
           style={{ fontSize: "clamp(3.1rem, 11.5vw, 9.5rem)" }}
         >
           <span aria-hidden="true" className="inline-block">
@@ -86,41 +104,51 @@ export function Hero() {
         {/* Role / place, set as structural metadata. */}
         {/* Sits over the brightest part of the shader, so it needs more
             contrast than the default label grey. */}
-        <p data-reveal data-reveal-delay="220" className="label mt-6 text-muted">
+        <p data-reveal data-reveal-delay="220" className="label mt-5 text-muted sm:mt-6">
           {profile.role} <span className="text-line-bright">/</span> {profile.location}
         </p>
 
-        <div className="mt-8 grid gap-x-12 gap-y-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-end">
-          {/* The thesis — the actual headline idea. */}
+        <div className="mt-7 grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start">
+          {/* The pitch — what he builds, in the words someone deciding whether
+              to hire him would use. First thing read after the name. */}
           <p
             data-reveal
             data-reveal-delay="300"
-            className="max-w-[16ch] font-serif leading-[1.02] tracking-[-0.01em] text-balance text-bone"
-            style={{ fontSize: "clamp(2rem, 5.2vw, 3.6rem)" }}
+            className="max-w-[46ch] font-sans leading-[1.35] tracking-[-0.015em] text-pretty text-muted"
+            style={{ fontSize: "clamp(1.35rem, 2.6vw, 1.95rem)" }}
           >
-            {profile.thesis}
+            {pitchParts.before}
+            {pitchParts.emphasis ? (
+              <span className="text-bone">{pitchParts.emphasis}</span>
+            ) : null}
+            {pitchParts.after}
           </p>
 
-          {/* Supporting line, rewritten tight from the summary. */}
-          <p
+          {/* The thesis, demoted to a quiet aside — still the best line on the
+              site, no longer the first argument the site makes. */}
+          <div
             data-reveal
             data-reveal-delay="380"
-            className="max-w-[46ch] text-pretty text-[0.95rem] leading-relaxed text-muted lg:pb-2"
+            className="max-w-[34ch] border-t border-line pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-1"
           >
-            Final-year IT student shipping AI-native products end to end — from the
-            data model to deployment to the iteration after launch.
-          </p>
+            <p
+              className="font-serif leading-[1.18] tracking-[-0.01em] text-pretty text-muted"
+              style={{ fontSize: "clamp(1.1rem, 2vw, 1.5rem)" }}
+            >
+              {profile.thesis}
+            </p>
+          </div>
         </div>
 
-        {/* Actions */}
+        {/* Actions — see the work, start a conversation, read the résumé. */}
         <div
           data-reveal
           data-reveal-delay="460"
-          className="mt-11 flex flex-wrap items-center gap-x-3 gap-y-4"
+          className="mt-9 flex flex-wrap items-center gap-x-3 gap-y-3 sm:mt-10"
         >
           <a
             href="#demo"
-            className="group inline-flex items-center gap-2.5 rounded-full bg-signal px-5 py-2.5 font-mono text-[0.8125rem] text-void transition-[filter,transform] duration-200 hover:brightness-110 active:translate-y-px"
+            className="group inline-flex min-h-11 items-center gap-2.5 rounded-full bg-signal px-5 font-mono text-[0.8125rem] text-void transition-[filter,transform] duration-200 hover:brightness-110 active:translate-y-px"
           >
             See it work
             <svg
@@ -133,10 +161,17 @@ export function Hero() {
           </a>
 
           <a
+            href="#contact"
+            className="inline-flex min-h-11 items-center rounded-full border border-line-bright px-5 font-mono text-[0.8125rem] text-bone transition-colors duration-200 hover:border-signal hover:text-signal"
+          >
+            Get in touch
+          </a>
+
+          <a
             href={profile.resumeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 rounded-full border border-line-bright px-5 py-2.5 font-mono text-[0.8125rem] text-bone transition-colors duration-200 hover:border-signal hover:text-signal"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 font-mono text-[0.8125rem] text-muted transition-colors duration-200 hover:text-bone"
           >
             Résumé
             <svg aria-hidden="true" viewBox="0 0 10 10" className="h-2.5 w-2.5 fill-current">
@@ -146,12 +181,12 @@ export function Hero() {
 
           <span aria-hidden className="mx-1 hidden h-4 w-px bg-line sm:block" />
 
-          <nav aria-label="Profiles" className="flex items-center gap-5">
+          <nav aria-label="Profiles" className="flex items-center gap-4">
             <a
               href={profile.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-[0.75rem] text-faint underline decoration-line-bright underline-offset-4 transition-colors hover:text-bone hover:decoration-signal"
+              className="inline-flex min-h-11 items-center font-mono text-[0.75rem] text-faint underline decoration-line-bright underline-offset-4 transition-colors hover:text-bone hover:decoration-signal"
             >
               GitHub
             </a>
@@ -159,11 +194,28 @@ export function Hero() {
               href={profile.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-[0.75rem] text-faint underline decoration-line-bright underline-offset-4 transition-colors hover:text-bone hover:decoration-signal"
+              className="inline-flex min-h-11 items-center font-mono text-[0.75rem] text-faint underline decoration-line-bright underline-offset-4 transition-colors hover:text-bone hover:decoration-signal"
             >
               LinkedIn
             </a>
           </nav>
+        </div>
+
+        {/* Stack — for the recruiter scanning rather than reading. */}
+        <div
+          data-reveal
+          data-reveal-delay="540"
+          className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-2"
+        >
+          <span className="label mr-1">Stack</span>
+          {profile.heroStack.map((item) => (
+            <span
+              key={item}
+              className="rounded-full border border-line px-2.5 py-1 font-mono text-[0.6875rem] leading-none text-faint"
+            >
+              {item}
+            </span>
+          ))}
         </div>
       </div>
 

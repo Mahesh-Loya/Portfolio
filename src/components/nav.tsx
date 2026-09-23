@@ -5,12 +5,21 @@ import { profile } from "@/content/site";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { PALETTE_OPEN_EVENT } from "@/components/command-palette";
 
+/**
+ * Every tracked section, in reading order for the drawer. Contact is tracked
+ * and listed here, but on the bar it is represented by the "Get in touch"
+ * action instead of a plain link.
+ */
 const SECTIONS = [
+  { id: "build", label: "Build" },
   { id: "work", label: "Work" },
   { id: "demo", label: "Demo" },
   { id: "about", label: "About" },
   { id: "contact", label: "Contact" },
 ];
+
+/** The bar shows only the content sections; contact has its own action. */
+const BAR_SECTIONS = SECTIONS.filter((section) => section.id !== "contact");
 
 function MenuIcon({ open }: { open: boolean }) {
   return (
@@ -90,19 +99,22 @@ export function Nav() {
         solid ? "glass border-x-0! border-t-0!" : "border-b border-transparent bg-transparent"
       }`}
     >
-      <nav aria-label="Primary" className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
-        <a href="#top" className="group flex items-center gap-2.5" aria-label={`${profile.name}, back to top`}>
+      <nav aria-label="Primary" className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-5 sm:gap-4 sm:px-8">
+        <a href="#top" className="group flex min-w-0 items-center gap-2.5" aria-label={`${profile.name}, back to top`}>
           <span
             aria-hidden="true"
-            className="inline-flex h-6 w-6 items-center justify-center border border-line-bright font-mono text-[10px] leading-none text-muted transition-colors group-hover:border-signal group-hover:text-signal"
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-line-bright font-mono text-[10px] leading-none text-muted transition-colors group-hover:border-signal group-hover:text-signal"
           >
             ML
           </span>
-          <span className="font-sans text-[15px] font-medium tracking-tight text-bone">{profile.name}</span>
+          {/* The wordmark yields first on very narrow phones; the monogram stays. */}
+          <span className="hidden truncate font-sans text-[15px] font-medium tracking-tight text-bone min-[360px]:inline">
+            {profile.name}
+          </span>
         </a>
 
         <div className="hidden items-center gap-1 md:flex">
-          {SECTIONS.map((section) => (
+          {BAR_SECTIONS.map((section) => (
             <a
               key={section.id}
               href={`#${section.id}`}
@@ -116,18 +128,33 @@ export function Nav() {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
+          {/* The conversion action. On the bar at every width, never behind the menu. */}
+          <a
+            href="#contact"
+            onClick={() => setMenuOpen(false)}
+            aria-current={active === "contact" ? "true" : undefined}
+            className={`inline-flex h-11 shrink-0 items-center rounded-sm border px-3.5 text-[13px] transition-colors md:h-9 md:text-[13.5px] ${
+              active === "contact"
+                ? "border-signal text-signal"
+                : "border-line-bright text-muted hover:border-signal hover:text-signal"
+            }`}
+          >
+            <span className="md:hidden">Contact</span>
+            <span className="hidden md:inline">Get in touch</span>
+          </a>
+
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent(PALETTE_OPEN_EVENT))}
             aria-label="Open command palette"
-            className="hidden items-center gap-1.5 rounded-sm border border-line px-2.5 py-1.5 font-mono text-[11px] text-faint transition-colors hover:border-line-bright hover:text-muted md:inline-flex"
+            className="hidden h-9 items-center gap-1.5 rounded-sm border border-line px-2.5 font-mono text-[11px] text-faint transition-colors hover:border-line-bright hover:text-muted md:inline-flex"
           >
             <span aria-hidden="true">{isMac ? "⌘" : "Ctrl"}</span>
             <span aria-hidden="true">K</span>
           </button>
 
-          <ThemeToggle />
+          <ThemeToggle className="h-11! w-11! md:h-9! md:w-9!" />
 
           <button
             ref={menuButtonRef}
@@ -136,7 +163,7 @@ export function Nav() {
             aria-expanded={menuOpen}
             aria-controls="nav-mobile-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-sm border border-line text-muted transition-colors hover:border-line-bright hover:text-bone md:hidden"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-line text-muted transition-colors hover:border-line-bright hover:text-bone md:hidden"
           >
             <MenuIcon open={menuOpen} />
           </button>
@@ -149,16 +176,18 @@ export function Nav() {
         className="border-t border-line md:hidden"
       >
         <ul className="mx-auto max-w-6xl px-5 py-2 sm:px-8">
-          {SECTIONS.map((section) => (
+          {SECTIONS.map((section, index) => (
             <li key={section.id} className="border-b border-line last:border-b-0">
               <a
                 href={`#${section.id}`}
                 onClick={() => setMenuOpen(false)}
                 aria-current={active === section.id ? "true" : undefined}
-                className="flex items-center justify-between py-3 text-[15px] text-muted transition-colors hover:text-bone"
+                className={`flex min-h-[48px] items-center justify-between py-3 text-[15px] transition-colors ${
+                  active === section.id ? "text-bone" : "text-muted hover:text-bone"
+                }`}
               >
                 {section.label}
-                <span className="label">{`0${SECTIONS.indexOf(section) + 1}`}</span>
+                <span className="label">{`0${index + 1}`}</span>
               </a>
             </li>
           ))}

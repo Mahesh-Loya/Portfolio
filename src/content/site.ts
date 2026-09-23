@@ -7,6 +7,20 @@ export const profile = {
   name: "Mahesh Loya",
   role: "Full-stack & AI engineer",
   thesis: "I make noisy reality machine-readable.",
+  /** Plain language, for someone deciding whether to hire. The thesis supports this, not the reverse. */
+  pitch:
+    "I build AI products that businesses actually use — WhatsApp assistants that handle voice notes and photos, voice agents that answer the phone, and search over your own data.",
+  /** Surfaced in the hero so a recruiter sees the stack without scrolling. */
+  heroStack: [
+    "TypeScript",
+    "Python",
+    "React",
+    "Next.js",
+    "FastAPI",
+    "PostgreSQL",
+    "pgvector",
+    "AWS",
+  ],
   location: "Pune, India",
   email: "loyamahesh3@gmail.com",
   phone: "7620851007",
@@ -490,5 +504,59 @@ export const alsoOnGithub: { name: string; language: string; repo: string }[] = 
     name: "Lab_Management_System",
     language: "JavaScript",
     repo: "https://github.com/Mahesh-Loya/Lab_Management_System",
+  },
+];
+
+
+/** Hard numbers, scannable in three seconds. Every one is verifiable on this site. */
+export const proofPoints: { value: string; label: string; note: string }[] = [
+  { value: "₹1,00,000", label: "1st prize", note: "MVPM Hackathon 2026" },
+  { value: "Daily", label: "In production", note: "At a Pune dealership" },
+  { value: "231+", label: "Registrations processed", note: "Blood donation platform" },
+  { value: "3", label: "Languages handled", note: "Hindi · Marathi · English" },
+];
+
+export type Offer = {
+  title: string;
+  /** Written for the person deciding, not for a peer reviewing architecture. */
+  blurb: string;
+  tech: string[];
+  proofLabel: string;
+  proofHref: string;
+};
+
+/** What someone can actually hire him to build, each backed by something on this site. */
+export const offers: Offer[] = [
+  {
+    title: "AI assistants that handle real customer messages",
+    blurb:
+      "Customers don't write clean queries. They send voice notes in Hinglish, photos of what they saw, and half a question at midnight. I build assistants that understand all of it and take the next action — answer, book, or hand over to a human.",
+    tech: ["GPT-4o", "Whisper", "WhatsApp API", "TypeScript", "Fastify"],
+    proofLabel: "See Vyavsay Assist",
+    proofHref: "/work/vyavsay-assist",
+  },
+  {
+    title: "Voice agents that answer the phone",
+    blurb:
+      "A missed call leaves no record of who wanted what. I build real-time voice agents that pick up, qualify the caller in their own language, and leave you a written lead — including handling the caller interrupting mid-sentence.",
+    tech: ["Python", "FastAPI", "WebSockets", "Redis", "STT/TTS"],
+    proofLabel: "See the voice pipeline",
+    proofHref: "/work/voice-ai-receptionist",
+  },
+  {
+    title: "Search over your own data",
+    blurb:
+      "Semantic search alone will happily return a ₹6.4 lakh car when someone asked for under ₹6 lakh. I build retrieval that understands what someone means while enforcing what they require — exactly, in the database.",
+    tech: ["pgvector", "HNSW", "Embeddings", "PostgreSQL", "RAG"],
+    proofLabel: "Try it running",
+    proofHref: "/#demo",
+  },
+  {
+    title: "Full products, end to end",
+    blurb:
+      "Schema and data modelling through API, interface, deployment and the iteration after launch. I've taken a paper process to a live platform in daily use, and I stay with it once real people depend on it.",
+    tech: ["React", "Node.js", "MongoDB", "Docker", "Nginx", "AWS"],
+    proofLabel: "See the platform",
+    proofHref: "/work/blood-donation-drive",
   },
 ];
