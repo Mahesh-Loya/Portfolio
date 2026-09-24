@@ -46,6 +46,17 @@ and chose that direction explicitly.
 
 ### The asset
 
+**Now:** `public/avatar/placeholder-robot.glb` — RobotExpressive from the three.js sample
+models, 456KB, CC0. It ships with fourteen animations (Idle, Wave, ThumbsUp, Yes, No,
+Dance) and three expression morphs, but **no visemes**, so it gestures and emotes rather
+than lip-syncs. A robot presenter also suits an AI portfolio, so this may be worth keeping
+even after a personal avatar exists.
+
+**Later:** a Ready Player Me avatar of Mahesh, which brings real visemes. The renderer
+takes the model path as a prop, so swapping is a one-line change.
+
+### The Ready Player Me asset
+
 Built with Ready Player Me from a selfie, exported as `.glb` and committed to the repo so
 nothing depends on a third-party service at runtime.
 
@@ -247,8 +258,10 @@ two voices must never overlap.
    Without those parameters the face cannot animate.
 3. **An ElevenLabs API key**, in `.env.local` as `ELEVENLABS_API_KEY`. Used only by
    `npm run voice`, never at runtime, never committed.
-4. **A decision on the call script's language** — the demo is more convincing in Hindi or
-   Marathi with English captions, matching the real product.
+4. **Call demo languages: Hindi and Marathi both**, with English captions. The real product
+   qualifies callers in Hindi, Marathi and English, so the demo offers a language switch
+   rather than picking one — which also demonstrates the multilingual claim instead of
+   stating it.
 
 ## Non-goals
 
