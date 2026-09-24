@@ -91,7 +91,7 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="relative border-t border-line">
+    <section id="contact" className="ambient relative border-t border-line">
       <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 md:py-36">
         <p data-reveal className="label">
           Contact
@@ -99,7 +99,7 @@ export function Contact() {
 
         <h2
           data-reveal
-          className="mt-6 max-w-3xl text-balance font-serif text-4xl leading-[1.1] text-bone sm:text-5xl md:text-6xl"
+          className="mt-8 max-w-3xl text-balance font-serif text-4xl leading-[1.1] text-bone sm:text-5xl md:text-6xl"
         >
           If you&apos;re building something that has to work in the real world, I&apos;d like to
           hear about it.
@@ -108,41 +108,45 @@ export function Contact() {
         <p
           data-reveal
           data-reveal-delay="80"
-          className="mt-7 max-w-xl text-pretty text-[15px] leading-relaxed text-muted sm:text-base"
+          className="mt-8 max-w-xl text-pretty text-[15px] leading-relaxed text-muted sm:text-base"
         >
           I take on freelance project work and full-time roles. Email is the most reliable way
           to reach me.
         </p>
 
         {/* Email first, as one large target: tapping it opens a mail app. */}
-        <div data-reveal data-reveal-delay="120" className="mt-12 border-y border-line py-8 sm:py-10">
+        <div
+          data-reveal
+          data-reveal-delay="120"
+          className="glass-panel mt-14 px-5 py-8 sm:px-9 sm:py-10 lg:px-11 lg:py-12"
+        >
           <a
             href={MAILTO}
             aria-label={`Email ${profile.email}`}
-            className="group flex items-start gap-3 text-bone transition-colors hover:text-signal sm:items-center sm:gap-4"
+            className="group flex items-start gap-3 text-bone transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal sm:items-center sm:gap-4"
           >
             <span className="min-w-0 break-words font-mono text-[1.375rem] leading-[1.15] tracking-tight sm:text-4xl md:text-5xl">
               {profile.email}
             </span>
             <span
               aria-hidden="true"
-              className="mt-1.5 shrink-0 text-faint transition-colors group-hover:text-signal sm:mt-0"
+              className="mt-1.5 shrink-0 text-faint transition-[color,transform] duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-1 group-hover:text-signal sm:mt-0"
             >
               <ArrowIcon />
             </span>
           </a>
 
-          <div className="mt-7 flex flex-wrap items-center gap-3">
+          <div className="mt-9 flex flex-wrap items-center gap-3">
             <a
               href={MAILTO}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-sm border border-line-bright px-5 text-[14px] text-bone transition-colors hover:border-signal hover:text-signal"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-xl border border-line-bright bg-gradient-to-b from-raised/85 to-surface/30 px-6 text-[14px] text-bone shadow-[inset_0_1px_0_rgb(255_255_255/0.06),0_1px_2px_rgb(0_0_0/0.26)] transition-[color,border-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] hover:border-signal hover:text-signal hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.09),0_1px_2px_rgb(0_0_0/0.26),0_16px_34px_-18px_rgb(0_0_0/0.72)]"
             >
               Send an email
             </a>
             <button
               type="button"
               onClick={onCopy}
-              className="inline-flex min-h-[44px] items-center rounded-sm border border-line px-5 font-mono text-[12px] uppercase tracking-[0.14em] transition-colors hover:border-line-bright"
+              className="inline-flex min-h-[48px] cursor-pointer items-center rounded-xl border border-line px-6 font-mono text-[12px] uppercase tracking-[0.14em] transition-[border-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] hover:border-line-bright hover:shadow-[0_12px_28px_-18px_rgb(0_0_0/0.7)]"
             >
               <span className={copied ? "text-signal" : "text-faint"}>
                 {copied ? "Copied" : "Copy address"}
@@ -158,9 +162,9 @@ export function Contact() {
         <div
           data-reveal
           data-reveal-delay="200"
-          className="mt-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-6"
+          className="mt-12 flex flex-wrap items-end justify-between gap-x-10 gap-y-6"
         >
-          <ul className="flex flex-wrap gap-x-8 gap-y-1">
+          <ul className="flex flex-wrap gap-x-10 gap-y-1">
             {LINKS.map((link) => (
               <li key={link.label}>
                 <a
@@ -168,9 +172,9 @@ export function Contact() {
                   {...(link.download
                     ? { download: "", rel: "noopener" }
                     : { target: "_blank", rel: "noopener noreferrer" })}
-                  className="group inline-flex min-h-[44px] items-baseline gap-2 py-3 text-[15px] text-muted transition-colors hover:text-bone"
+                  className="group inline-flex min-h-[44px] items-baseline gap-2 py-3 text-[15px] text-muted transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-bone"
                 >
-                  <span className="border-b border-line pb-0.5 transition-colors group-hover:border-signal">
+                  <span className="border-b border-line pb-1 transition-colors duration-500 ease-[var(--ease-out-expo)] group-hover:border-signal">
                     {link.label}
                   </span>
                   <span className="font-mono text-[11px] text-faint">{link.hint}</span>

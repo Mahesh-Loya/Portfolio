@@ -95,15 +95,20 @@ export function Nav() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-[120] transition-colors duration-300 ${
-        solid ? "glass border-x-0! border-t-0!" : "border-b border-transparent bg-transparent"
+      /* Scrolled state settles in rather than snapping: the glass arrives with
+         a hairline and one soft cast shadow, so the bar floats over content
+         instead of being ruled off from it. */
+      className={`fixed inset-x-0 top-0 z-[120] transition-[background-color,border-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] ${
+        solid
+          ? "glass border-x-0! border-t-0! shadow-[0_14px_36px_-28px_rgb(0_0_0/0.9)]"
+          : "border-b border-transparent bg-transparent shadow-none"
       }`}
     >
-      <nav aria-label="Primary" className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-5 sm:gap-4 sm:px-8">
+      <nav aria-label="Primary" className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-5 sm:gap-4 sm:px-8 md:h-16">
         <a href="#top" className="group flex min-w-0 items-center gap-2.5">
           <span
             aria-hidden="true"
-            className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-line-bright font-mono text-[10px] leading-none text-muted transition-colors group-hover:border-signal group-hover:text-signal"
+            className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-line-bright bg-surface/50 font-mono text-[10px] leading-none text-muted transition-colors duration-500 ease-[var(--ease-out-expo)] group-hover:border-signal group-hover:text-signal"
           >
             ML
           </span>
@@ -120,8 +125,10 @@ export function Nav() {
               key={section.id}
               href={`#${section.id}`}
               aria-current={active === section.id ? "true" : undefined}
-              className={`rounded-sm px-3 py-1.5 text-[13.5px] transition-colors ${
-                active === section.id ? "text-bone" : "text-muted hover:text-bone"
+              className={`rounded-full px-3.5 py-2 text-[13.5px] transition-[color,background-color] duration-500 ease-[var(--ease-out-expo)] ${
+                active === section.id
+                  ? "bg-raised/80 text-bone"
+                  : "text-muted hover:bg-surface/60 hover:text-bone"
               }`}
             >
               {section.label}
@@ -135,10 +142,10 @@ export function Nav() {
             href="#contact"
             onClick={() => setMenuOpen(false)}
             aria-current={active === "contact" ? "true" : undefined}
-            className={`inline-flex h-11 shrink-0 items-center rounded-sm border px-3.5 text-[13px] transition-colors md:h-9 md:text-[13.5px] ${
+            className={`inline-flex h-11 shrink-0 items-center rounded-full border px-4 text-[13px] transition-[color,border-color,background-color] duration-500 ease-[var(--ease-out-expo)] md:h-10 md:px-5 md:text-[13.5px] ${
               active === "contact"
-                ? "border-signal text-signal"
-                : "border-line-bright text-muted hover:border-signal hover:text-signal"
+                ? "border-signal/70 bg-signal/5 text-signal"
+                : "border-line-bright bg-surface/50 text-muted hover:border-signal/60 hover:bg-signal/5 hover:text-signal"
             }`}
           >
             <span className="md:hidden">Contact</span>
@@ -149,13 +156,13 @@ export function Nav() {
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent(PALETTE_OPEN_EVENT))}
             aria-label={`${isMac ? "⌘" : "Ctrl"} K — open command palette`}
-            className="hidden h-9 items-center gap-1.5 rounded-sm border border-line px-2.5 font-mono text-[11px] text-faint transition-colors hover:border-line-bright hover:text-muted md:inline-flex"
+            className="hidden h-10 items-center gap-1.5 rounded-full border border-line bg-surface/40 px-3 font-mono text-[11px] text-faint transition-[color,border-color,background-color] duration-500 ease-[var(--ease-out-expo)] hover:border-line-bright hover:bg-surface/70 hover:text-muted md:inline-flex"
           >
             <span aria-hidden="true">{isMac ? "⌘" : "Ctrl"}</span>
             <span aria-hidden="true">K</span>
           </button>
 
-          <ThemeToggle className="h-11! w-11! md:h-9! md:w-9!" />
+          <ThemeToggle className="h-11! w-11! rounded-xl! bg-surface/40 md:h-10! md:w-10!" />
 
           <button
             ref={menuButtonRef}
@@ -164,7 +171,7 @@ export function Nav() {
             aria-expanded={menuOpen}
             aria-controls="nav-mobile-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-line text-muted transition-colors hover:border-line-bright hover:text-bone md:hidden"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-line bg-surface/40 text-muted transition-[color,border-color,background-color] duration-500 ease-[var(--ease-out-expo)] hover:border-line-bright hover:bg-surface/70 hover:text-bone md:hidden"
           >
             <MenuIcon open={menuOpen} />
           </button>
@@ -176,14 +183,14 @@ export function Nav() {
         hidden={!menuOpen}
         className="border-t border-line md:hidden"
       >
-        <ul className="mx-auto max-w-6xl px-5 py-2 sm:px-8">
+        <ul className="mx-auto max-w-6xl px-5 py-3 sm:px-8">
           {SECTIONS.map((section, index) => (
             <li key={section.id} className="border-b border-line last:border-b-0">
               <a
                 href={`#${section.id}`}
                 onClick={() => setMenuOpen(false)}
                 aria-current={active === section.id ? "true" : undefined}
-                className={`flex min-h-[48px] items-center justify-between py-3 text-[15px] transition-colors ${
+                className={`flex min-h-[52px] items-center justify-between py-3.5 text-[15px] transition-colors duration-500 ease-[var(--ease-out-expo)] ${
                   active === section.id ? "text-bone" : "text-muted hover:text-bone"
                 }`}
               >

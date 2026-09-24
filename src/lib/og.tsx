@@ -9,7 +9,7 @@ const BONE = "#edede8";
 const MUTED = "#a1a1a6";
 const FAINT = "#6b6b72";
 const LINE = "#232327";
-const SIGNAL = "#c6f24e";
+const SIGNAL = "#e8b75a";
 
 /** Satori needs real font data; these are bundled so rendering never depends on the network. */
 export async function loadOgFonts() {

@@ -44,7 +44,7 @@ Design consequences:
 | Canvas (dark) | `#0A0A0B` | Default theme |
 | Canvas (light) | `#FBFBF9` | Full parity, not an afterthought |
 | Text | Bone white `#EDEDE8` / ink `#141414` | |
-| Accent | Acid lime `#C6F24E` | Single accent. Deliberately not default-LLM purple |
+| Accent | Warm gold `#E8B75A` | Single accent. Superseded acid lime on 2026-09-24 — gold reads premium rather than terminal for a client and recruiter audience |
 | Muted | Slate greys, 4 steps | |
 
 - **Type:** tight grotesk for UI, true mono for data/code, editorial serif for long-form prose.

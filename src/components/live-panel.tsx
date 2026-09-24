@@ -32,6 +32,18 @@ const LOAD_TIMEOUT_MS = 12_000;
 /** Matches Tailwind's `md`. Below it, a desktop site in a box is unusable. */
 const DESKTOP_QUERY = "(min-width: 768px)";
 
+/**
+ * Scroll-away thresholds. Two steps, deliberately graded:
+ *
+ *   below 35% visible — a live panel is handed back to `inert`. Far enough
+ *     gone that the visitor has plainly moved on, far enough from zero that a
+ *     half-scrolled panel they are still reading never goes dead under them.
+ *   fully out of view — the iframe is unmounted and the panel returns to
+ *     `idle`, so a site that has been scrolled past stops spending CPU,
+ *     network and memory. Only an exact exit counts, never scroll jitter.
+ */
+const RELEASE_RATIO = 0.35;
+
 const SANDBOX =
   "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox";
 
@@ -80,6 +92,8 @@ function ExternalIcon() {
 export function LivePanel({ url, poster, title, note, className }: LivePanelProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [status, setStatus] = useState("");
+  /** True once a scroll-away has taken the panel back to idle. */
+  const [reclaimed, setReclaimed] = useState(false);
 
   const reduced = useReducedMotion();
   const still = Boolean(reduced);
@@ -88,8 +102,14 @@ export function LivePanel({ url, poster, title, note, className }: LivePanelProp
   const activateRef = useRef<HTMLButtonElement>(null);
   const releaseRef = useRef<HTMLButtonElement>(null);
   const timerRef = useRef<number | null>(null);
-  /** Which control should take focus after the next phase commit. */
-  const refocusRef = useRef<"activate" | "release" | null>(null);
+  /**
+   * Which control should take focus after the next phase commit, and whether
+   * the page may scroll to reach it. It may not when the move was caused by
+   * scrolling away — yanking the viewport back would be the worse bug.
+   */
+  const refocusRef = useRef<{ to: "activate" | "release"; scroll: boolean } | null>(null);
+  /** Read by the observer, which is built once and must not close over state. */
+  const phaseRef = useRef<Phase>(phase);
 
   const host = hostnameOf(url);
   const labelId = useId();
@@ -103,6 +123,7 @@ export function LivePanel({ url, poster, title, note, className }: LivePanelProp
 
   const load = useCallback(() => {
     clearTimer();
+    setReclaimed(false);
     setPhase("loading");
     setStatus(`Loading ${host} inside the panel.`);
     timerRef.current = window.setTimeout(() => {
@@ -119,7 +140,7 @@ export function LivePanel({ url, poster, title, note, className }: LivePanelProp
   }, [clearTimer, host]);
 
   const engage = useCallback(() => {
-    refocusRef.current = "release";
+    refocusRef.current = { to: "release", scroll: true };
     setPhase((current) => (current === "inert" ? "live" : current));
     setStatus(
       `${host} is now interactive. Press Escape, choose Release, or click outside the panel to hand control back to the page.`,
@@ -127,12 +148,28 @@ export function LivePanel({ url, poster, title, note, className }: LivePanelProp
   }, [host]);
 
   const release = useCallback(
-    (refocus: boolean) => {
-      refocusRef.current = refocus ? "activate" : null;
+    (refocus: boolean, reason: "manual" | "scroll" = "manual") => {
+      refocusRef.current = refocus ? { to: "activate", scroll: reason === "manual" } : null;
       setPhase((current) => (current === "live" ? "inert" : current));
-      setStatus(`Control returned to the page. ${host} is still loaded.`);
+      setStatus(
+        reason === "scroll"
+          ? `${host} scrolled out of view, so control was returned to the page. It is still loaded.`
+          : `Control returned to the page. ${host} is still loaded.`,
+      );
     },
     [host],
+  );
+
+  /** Everything external out of the DOM, poster back, ready to be asked again. */
+  const unload = useCallback(
+    (refocus: boolean) => {
+      clearTimer();
+      refocusRef.current = refocus ? { to: "activate", scroll: false } : null;
+      setReclaimed(true);
+      setPhase("idle");
+      setStatus(`${host} was scrolled past, so it was unloaded. It can be loaded again.`);
+    },
+    [clearTimer, host],
   );
 
   // Escape, and any click that lands outside the panel, give the page back.
@@ -161,8 +198,8 @@ export function LivePanel({ url, poster, title, note, className }: LivePanelProp
     const target = refocusRef.current;
     if (!target) return;
     refocusRef.current = null;
-    const node = target === "release" ? releaseRef.current : activateRef.current;
-    node?.focus();
+    const node = target.to === "release" ? releaseRef.current : activateRef.current;
+    node?.focus({ preventScroll: !target.scroll });
   }, [phase]);
 
   // A viewport that drops below `md` unloads the embed entirely rather than
@@ -173,6 +210,7 @@ export function LivePanel({ url, poster, title, note, className }: LivePanelProp
       if (query.matches) return;
       clearTimer();
       refocusRef.current = null;
+      setReclaimed(false);
       setPhase("idle");
       setStatus("");
     };
@@ -180,6 +218,47 @@ export function LivePanel({ url, poster, title, note, className }: LivePanelProp
     query.addEventListener("change", sync);
     return () => query.removeEventListener("change", sync);
   }, [clearTimer]);
+
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
+
+  // Scrolling away is a release. A panel left interactive off screen keeps
+  // capturing input and holding focus — exactly what `inert` exists to stop —
+  // and a panel scrolled well past has no business still running.
+  useEffect(() => {
+    const node = panelRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") return;
+
+    /** Focus only moves if it was actually in here; otherwise it stays put. */
+    const holdsFocus = () => {
+      const active = document.activeElement;
+      return active instanceof Node && node.contains(active);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[entries.length - 1];
+        if (!entry) return;
+
+        const current = phaseRef.current;
+        if (current === "idle") return;
+
+        if (!entry.isIntersecting || entry.intersectionRatio <= 0) {
+          unload(holdsFocus());
+          return;
+        }
+
+        if (current === "live" && entry.intersectionRatio < RELEASE_RATIO) {
+          release(holdsFocus(), "scroll");
+        }
+      },
+      { threshold: [0, RELEASE_RATIO] },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [release, unload]);
 
   useEffect(() => clearTimer, [clearTimer]);
 
@@ -290,7 +369,12 @@ export function LivePanel({ url, poster, title, note, className }: LivePanelProp
 
           {/* State 1 — idle. */}
           {phase === "idle" ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-void/70 p-6 text-center">
+            <motion.div
+              initial={reclaimed && !still ? { opacity: 0 } : false}
+              animate={{ opacity: 1 }}
+              transition={still ? { duration: 0 } : { duration: 0.28, ease: "easeOut" }}
+              className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-void/70 p-6 text-center"
+            >
               <span className="label">Live site</span>
 
               <button
@@ -318,7 +402,7 @@ export function LivePanel({ url, poster, title, note, className }: LivePanelProp
               <span className="max-w-[32ch] font-mono text-[0.6875rem] leading-relaxed text-pretty text-faint md:hidden">
                 Embedded interaction needs a wider screen — this opens in a new tab.
               </span>
-            </div>
+            </motion.div>
           ) : null}
 
           {/* Between idle and inert. */}

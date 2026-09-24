@@ -22,7 +22,7 @@ export default async function Icon() {
           alignItems: "center",
           justifyContent: "center",
           background: "#0a0a0b",
-          color: "#c6f24e",
+          color: "#e8b75a",
           fontSize: 19,
           fontFamily: "Sans",
           letterSpacing: -1,

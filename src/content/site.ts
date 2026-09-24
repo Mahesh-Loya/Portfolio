@@ -93,7 +93,6 @@ export const caseStudies: CaseStudy[] = [
       alt: "The VyavsayAssist product page, showing a WhatsApp conversation in Hinglish where a customer asks a car's price and the assistant books a test drive.",
     },
     live: "https://vyavsayassist.app",
-    repo: "https://github.com/Mahesh-Loya/Vyavsay_Assist",
     // No embed: the site paints its background inside an iframe but never renders,
     // and the dealer CRM sits behind a login. A built simulation replaces it.
     title: "Vyavsay Assist",

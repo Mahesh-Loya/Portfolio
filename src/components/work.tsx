@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { BuildLogEntry, CaseStudy } from "@/content/site";
 import { alsoOnGithub, buildLog, caseStudies, profile } from "@/content/site";
 import { LivePanel } from "./live-panel";
-import { ProductShot } from "./product-shot";
+import { VyavsayDemo } from "./vyavsay-demo";
 
 /**
  * One section for the whole body of work.
@@ -15,6 +15,20 @@ import { ProductShot } from "./product-shot";
  */
 
 const VISIBLE_STACK = 5;
+
+/**
+ * The shared surface for a panel that isn't holding a live frame: a generous
+ * radius, a gentle top-lit fill instead of a flat one, a hairline highlight
+ * along the top edge and a layered shadow underneath. The point is that the
+ * panel sits on the page rather than being drawn onto it. Tuned to sit one
+ * step quieter than `.glass-panel`, which is reserved for the live frames.
+ */
+const PANEL =
+  "rounded-[18px] border border-line bg-gradient-to-b from-raised/70 to-surface/20 " +
+  "shadow-[inset_0_1px_0_rgb(255_255_255/0.05),0_1px_2px_rgb(0_0_0/0.26),0_18px_44px_-24px_rgb(0_0_0/0.60)] " +
+  "transition-[border-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] " +
+  "hover:border-line-bright " +
+  "hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_1px_2px_rgb(0_0_0/0.26),0_28px_60px_-28px_rgb(0_0_0/0.72)]";
 
 function ordinal(index: number): string {
   return String(index + 1).padStart(2, "0");
@@ -39,17 +53,17 @@ function splitLead(text: string): { lead: string; rest: string } {
 /** The escape valve for length: the content is still here, just not all at once. */
 function More({ label = "More on this", children }: { label?: string; children: React.ReactNode }) {
   return (
-    <details className="group/more mt-4">
-      <summary className="label inline-flex cursor-pointer list-none items-center gap-2 transition-colors hover:text-signal focus-visible:text-signal [&::-webkit-details-marker]:hidden">
+    <details className="group/more mt-2">
+      <summary className="label inline-flex min-h-[44px] cursor-pointer list-none items-center gap-2 transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal [&::-webkit-details-marker]:hidden">
         <span
           aria-hidden="true"
-          className="font-mono text-signal transition-transform duration-300 group-open/more:rotate-45"
+          className="font-mono text-signal transition-transform duration-500 ease-[var(--ease-out-expo)] group-open/more:rotate-45"
         >
           +
         </span>
         {label}
       </summary>
-      <p className="mt-3 max-w-[62ch] text-pretty text-sm leading-relaxed text-faint">{children}</p>
+      <p className="mt-1 max-w-[62ch] text-pretty text-sm leading-relaxed text-faint">{children}</p>
     </details>
   );
 }
@@ -58,17 +72,19 @@ function StackChips({ items, cap = VISIBLE_STACK }: { items: string[]; cap?: num
   const shown = items.slice(0, cap);
   const rest = items.length - shown.length;
   return (
-    <ul className="flex flex-wrap items-center gap-1.5">
+    <ul className="flex flex-wrap items-center gap-2">
       {shown.map((item) => (
         <li
           key={item}
-          className="border border-line px-2 py-1 font-mono text-[10px] tracking-[0.06em] text-faint"
+          className="rounded-md border border-line bg-surface/40 px-2.5 py-1.5 font-mono text-[10px] tracking-[0.06em] text-faint"
         >
           {item}
         </li>
       ))}
       {rest > 0 ? (
-        <li className="px-1 font-mono text-[10px] tracking-[0.06em] text-faint">+{rest} more</li>
+        <li className="px-1 py-1.5 font-mono text-[10px] tracking-[0.06em] text-faint">
+          +{rest} more
+        </li>
       ) : null}
     </ul>
   );
@@ -76,10 +92,10 @@ function StackChips({ items, cap = VISIBLE_STACK }: { items: string[]; cap?: num
 
 function Metrics({ metrics, size = "sm" }: { metrics: CaseStudy["metrics"]; size?: "sm" | "lg" }) {
   return (
-    <dl className="flex flex-wrap gap-x-8 gap-y-5 sm:gap-x-12">
+    <dl className="flex flex-wrap gap-x-10 gap-y-6 sm:gap-x-14">
       {metrics.map((m) => (
         <div key={m.label} className="min-w-0">
-          <dt className="label mb-1.5">{m.label}</dt>
+          <dt className="label mb-2">{m.label}</dt>
           <dd
             className={`tracking-tight text-bone tabular-nums ${
               size === "lg" ? "text-2xl md:text-3xl" : "text-xl"
@@ -125,13 +141,13 @@ function CaseLink({ slug, title }: { slug: string; title: string }) {
   return (
     <Link
       href={`/work/${slug}`}
-      className="group/link inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-signal focus-visible:text-signal"
+      className="group/link inline-flex min-h-[44px] items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal"
     >
       Read the case study
       <span className="sr-only"> for {title}</span>
       <span
         aria-hidden="true"
-        className="transition-transform duration-300 group-hover/link:translate-x-1"
+        className="transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover/link:translate-x-1"
       >
         &#8594;
       </span>
@@ -142,13 +158,13 @@ function CaseLink({ slug, title }: { slug: string; title: string }) {
 function RepoLinks({ entry }: { entry: BuildLogEntry }) {
   if (!entry.repo && !entry.live) return null;
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
       {entry.repo ? (
         <a
           href={entry.repo}
           target="_blank"
           rel="noreferrer"
-          className="font-mono text-[10px] tracking-[0.16em] text-muted uppercase transition-colors hover:text-signal focus-visible:text-signal"
+          className="inline-flex min-h-[44px] items-center font-mono text-[10px] tracking-[0.16em] text-muted uppercase transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal"
         >
           Source
           <span className="sr-only"> code for {entry.name} on GitHub</span>
@@ -159,7 +175,7 @@ function RepoLinks({ entry }: { entry: BuildLogEntry }) {
           href={entry.live}
           target="_blank"
           rel="noreferrer"
-          className="font-mono text-[10px] tracking-[0.16em] text-muted uppercase transition-colors hover:text-signal focus-visible:text-signal"
+          className="inline-flex min-h-[44px] items-center font-mono text-[10px] tracking-[0.16em] text-muted uppercase transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal"
         >
           Open live
           <span className="sr-only"> site for {entry.name}</span>
@@ -174,8 +190,8 @@ function RepoLinks({ entry }: { entry: BuildLogEntry }) {
 /** The most prominence on the page: full measure, the product shot, the metrics. */
 function FeaturePanel({ study, index }: { study: CaseStudy; index: number }) {
   return (
-    <article data-reveal>
-      <div className="rule mb-8" />
+    <article className={`${PANEL} p-6 sm:p-10 lg:p-14`} data-reveal>
+      <div className="rule mb-9" />
       <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
         <Marker index={index} accent />
         <span className="label">{study.period}</span>
@@ -186,34 +202,30 @@ function FeaturePanel({ study, index }: { study: CaseStudy; index: number }) {
         {study.live ? <LiveTag /> : null}
       </div>
 
-      <h3 className="mt-6 text-balance text-4xl leading-[0.98] tracking-tight text-bone sm:text-5xl lg:text-6xl">
+      <h3 className="mt-7 text-balance text-4xl leading-[0.98] tracking-tight text-bone sm:text-5xl lg:text-6xl">
         <Link
           href={`/work/${study.slug}`}
           style={titleTransition(study.slug)}
-          className="hover:text-signal focus-visible:text-signal"
+          className="transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal"
         >
           {study.title}
         </Link>
       </h3>
-      <p className="mt-4 max-w-[46ch] text-pretty text-lg text-muted">{study.kicker}</p>
+      <p className="mt-5 max-w-[46ch] text-pretty text-lg text-muted">{study.kicker}</p>
 
-      {study.shot ? (
-        <figure className="mt-10 md:mt-12">
-          <ProductShot src={study.shot.src} alt={study.shot.alt} />
-          <figcaption className="mt-3 font-mono text-[10px] tracking-[0.14em] text-faint uppercase">
-            The shipped product &#183; an interactive demo is being built
-          </figcaption>
-        </figure>
-      ) : null}
+      {/* The flagship cannot be embedded live, so it is played instead. */}
+      <div className="mt-12 md:mt-14">
+        <VyavsayDemo />
+      </div>
 
-      <div className="mt-12 grid gap-10 border-t border-line pt-10 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
+      <div className="mt-14 grid gap-12 border-t border-line pt-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
         <div>
           <blockquote className="max-w-[34ch] text-balance font-serif text-2xl leading-[1.28] text-bone sm:text-3xl">
             {study.premise}
           </blockquote>
           <More>{study.context}</More>
         </div>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-9">
           <Metrics metrics={study.metrics} size="lg" />
           <StackChips items={study.stack} />
           <CaseLink slug={study.slug} title={study.title} />
@@ -232,8 +244,8 @@ function FeaturePanel({ study, index }: { study: CaseStudy; index: number }) {
  */
 function EditorialPanel({ study, index }: { study: CaseStudy; index: number }) {
   return (
-    <article data-reveal data-reveal-delay="80">
-      <div className="rule mb-8" />
+    <article className={`${PANEL} p-6 sm:p-10 lg:p-12`} data-reveal data-reveal-delay="80">
+      <div className="rule mb-9" />
       <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
         <div className="lg:col-span-7">
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
@@ -251,21 +263,21 @@ function EditorialPanel({ study, index }: { study: CaseStudy; index: number }) {
             <Link
               href={`/work/${study.slug}`}
               style={titleTransition(study.slug)}
-              className="hover:text-signal focus-visible:text-signal"
+              className="transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal"
             >
               {study.title}
             </Link>
           </h3>
-          <p className="mt-3 max-w-[38ch] text-pretty text-muted">{study.kicker}</p>
-          <p className="label mt-4">{study.role}</p>
+          <p className="mt-4 max-w-[38ch] text-pretty text-muted">{study.kicker}</p>
+          <p className="label mt-5">{study.role}</p>
           <More>{study.context}</More>
-          <div className="mt-8">
+          <div className="mt-6">
             <CaseLink slug={study.slug} title={study.title} />
           </div>
         </div>
       </div>
 
-      <div className="mt-10 flex flex-col gap-6 border-t border-line pt-8">
+      <div className="mt-12 flex flex-col gap-7 border-t border-line pt-10">
         <Metrics metrics={study.metrics} />
         <StackChips items={study.stack} />
       </div>
@@ -286,8 +298,8 @@ function LiveFrame({
   children: React.ReactNode;
 }) {
   return (
-    <div className="glass-panel bracketed rounded-lg p-4 transition-colors duration-500 sm:p-5">
-      <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
+    <div className="glass-panel bracketed p-5 sm:p-7 lg:p-8">
+      <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
         <div className={`lg:col-span-7 ${mirrored ? "lg:order-2 lg:col-start-6" : ""}`}>{media}</div>
         <div className={`flex flex-col lg:col-span-5 ${mirrored ? "lg:order-1 lg:col-start-1" : ""}`}>
           {children}
@@ -322,22 +334,22 @@ function LiveStudyPanel({
           <span className="label">{study.period}</span>
           {study.live ? <LiveTag /> : null}
         </div>
-        <h3 className="mt-3 text-balance text-xl leading-tight tracking-tight text-bone sm:text-2xl">
+        <h3 className="mt-4 text-balance text-xl leading-tight tracking-tight text-bone sm:text-2xl">
           <Link
             href={`/work/${study.slug}`}
             style={titleTransition(study.slug)}
-            className="hover:text-signal focus-visible:text-signal"
+            className="transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal"
           >
             {study.title}
           </Link>
         </h3>
-        <p className="mt-3 max-w-[40ch] text-pretty text-sm text-muted">{study.kicker}</p>
-        <blockquote className="mt-5 max-w-[34ch] border-l border-line-bright pl-4 font-serif text-lg leading-[1.35] text-bone">
+        <p className="mt-4 max-w-[40ch] text-pretty text-sm text-muted">{study.kicker}</p>
+        <blockquote className="mt-6 max-w-[34ch] border-l-2 border-signal/30 py-1 pl-5 font-serif text-lg leading-[1.35] text-bone">
           {study.premise}
         </blockquote>
         <More>{study.context}</More>
 
-        <div className="mt-auto flex flex-col gap-5 pt-8">
+        <div className="mt-auto flex flex-col gap-6 pt-10">
           <Metrics metrics={study.metrics} />
           <StackChips items={study.stack} cap={4} />
           <CaseLink slug={study.slug} title={study.title} />
@@ -373,13 +385,13 @@ function LiveEntryPanel({
           <Marker index={index} />
           <LiveTag />
         </div>
-        <h3 className="mt-3 text-xl leading-tight tracking-tight text-bone sm:text-2xl">
+        <h3 className="mt-4 text-xl leading-tight tracking-tight text-bone sm:text-2xl">
           {entry.name}
         </h3>
-        <p className="mt-3 max-w-[40ch] text-pretty text-sm leading-relaxed text-muted">{lead}</p>
+        <p className="mt-4 max-w-[40ch] text-pretty text-sm leading-relaxed text-muted">{lead}</p>
         {rest ? <More>{rest}</More> : null}
 
-        <div className="mt-auto flex flex-col gap-5 pt-8">
+        <div className="mt-auto flex flex-col gap-6 pt-10">
           <StackChips items={entry.tech} cap={4} />
           <RepoLinks entry={entry} />
         </div>
@@ -395,8 +407,8 @@ function CompactPanel({ entry, index }: { entry: BuildLogEntry; index: number })
   const { lead, rest } = splitLead(entry.blurb);
 
   return (
-    <article className="border-t border-line pt-8" data-reveal data-reveal-delay="40">
-      <div className="grid gap-6 lg:grid-cols-12 lg:gap-14">
+    <article className={`${PANEL} p-6 sm:p-8 lg:p-10`} data-reveal data-reveal-delay="40">
+      <div className="grid gap-7 lg:grid-cols-12 lg:gap-14">
         <div className="flex items-baseline gap-4 lg:col-span-4">
           <Marker index={index} />
           <h3 className="text-lg leading-tight tracking-tight text-bone sm:text-xl">{entry.name}</h3>
@@ -404,7 +416,7 @@ function CompactPanel({ entry, index }: { entry: BuildLogEntry; index: number })
         <div className="lg:col-span-8">
           <p className="max-w-[58ch] text-pretty text-sm leading-relaxed text-muted">{lead}</p>
           {rest ? <More>{rest}</More> : null}
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div className="mt-7 flex flex-wrap items-center gap-x-8 gap-y-3">
             <StackChips items={entry.tech} />
             <RepoLinks entry={entry} />
           </div>
@@ -537,41 +549,41 @@ export function Work() {
     <section
       id="work"
       aria-labelledby="work-heading"
-      className="relative scroll-mt-24 px-6 py-28 md:px-10 md:py-40"
+      className="ambient relative scroll-mt-24 px-6 py-28 md:px-10 md:py-40"
     >
       <div className="mx-auto w-full max-w-6xl">
-        <header className="mb-16 md:mb-24" data-reveal>
+        <header className="mb-20 md:mb-28" data-reveal>
           <p className="label">Work</p>
           <h2
             id="work-heading"
-            className="mt-5 max-w-[22ch] text-balance text-3xl leading-tight tracking-tight text-bone sm:text-4xl"
+            className="mt-6 max-w-[22ch] text-balance text-3xl leading-tight tracking-tight text-bone sm:text-4xl"
           >
             Six projects, each one here to be opened rather than read about.
           </h2>
-          <p className="mt-4 max-w-[54ch] text-pretty text-muted">
+          <p className="mt-6 max-w-[54ch] text-pretty text-muted">
             Three of them are running live on this page; the rest link to the code, or to the
             full write-up.
           </p>
         </header>
 
-        <div className="flex flex-col gap-20 md:gap-28">{slots.map(renderSlot)}</div>
+        <div className="flex flex-col gap-16 md:gap-24">{slots.map(renderSlot)}</div>
 
         <div
-          className="mt-20 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-6 md:mt-28"
+          className={`${PANEL} mt-20 flex flex-wrap items-center gap-x-8 gap-y-2 px-6 py-4 sm:px-8 md:mt-28`}
           data-reveal
         >
           <span className="label">Also on GitHub</span>
-          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <ul className="flex flex-wrap items-center gap-x-6 gap-y-1">
             {alsoOnGithub.map((repo) => (
               <li key={repo.name}>
                 <a
                   href={repo.repo}
                   target="_blank"
                   rel="noreferrer"
-                  className="group font-mono text-xs text-faint transition-colors hover:text-bone focus-visible:text-bone"
+                  className="group inline-flex min-h-[44px] items-center font-mono text-xs text-faint transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-bone focus-visible:text-bone"
                 >
                   {repo.name}
-                  <span className="ml-2 text-line-bright transition-colors group-hover:text-faint">
+                  <span className="ml-2 text-line-bright transition-colors duration-500 ease-[var(--ease-out-expo)] group-hover:text-faint">
                     {repo.language}
                   </span>
                 </a>
@@ -582,7 +594,7 @@ export function Work() {
             href={profile.github}
             target="_blank"
             rel="noreferrer"
-            className="ml-auto font-mono text-[10px] tracking-[0.16em] text-muted uppercase transition-colors hover:text-signal focus-visible:text-signal"
+            className="ml-auto inline-flex min-h-[44px] items-center font-mono text-[10px] tracking-[0.16em] text-muted uppercase transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal"
           >
             All repositories &#8594;
           </a>
