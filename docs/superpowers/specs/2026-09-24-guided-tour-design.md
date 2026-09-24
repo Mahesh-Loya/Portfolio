@@ -254,15 +254,13 @@ two voices must never overlap.
    room, speaking naturally rather than reading stiffly. ElevenLabs Instant Voice Cloning
    needs consent that the voice is his own, which it is.
 
-   **Take 1 (2026-09-24) is recorded but is a WhatsApp voice note**, and that is a problem
-   worth one re-record: 19 kb/s Opus, mono, with peaks at +0.2 dBFS, meaning WhatsApp's
-   automatic gain has already limited and clipped it, on top of its noise suppression. The
-   length (2:29) and delivery are right; the encoding is not. A clone built from it will
-   sound thinner and more artefacted than the same performance captured properly.
+   **Take 2 (2026-09-24) is the one to clone from** — `voice-samples/take2-voice-recorder.m4a`.
+   128 kb/s AAC, 48 kHz mono, 2:40, peaks at -2.8 dBFS with real headroom and no clipping,
+   noise floor around -51 dB for roughly 29 dB of signal-to-noise, and no silence gap longer
+   than 1.5 seconds anywhere in it. That is comfortably good enough.
 
-   The fix is three minutes of work: re-record with the phone's own Voice Recorder app,
-   which saves at roughly ten times the bitrate with none of the call-optimised processing.
-   Take 1 stays as the fallback so nothing is blocked either way.
+   Take 1 was a WhatsApp voice note at 19 kb/s with peaks already limited into the ceiling;
+   it is kept only as a fallback and should not be used if take 2 is available.
 
    Raw samples live in `voice-samples/` and are gitignored — publishing a clean sample of
    someone's voice is precisely what voice-cloning misuse needs. Generated narration in

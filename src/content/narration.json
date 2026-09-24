@@ -1,0 +1,53 @@
+{
+  "voiceSettings": {
+    "stability": 0.38,
+    "similarity_boost": 0.75,
+    "style": 0.35,
+    "use_speaker_boost": true
+  },
+  "model": "eleven_multilingual_v2",
+  "chapters": [
+    {
+      "id": "intro",
+      "title": "Start here",
+      "target": "#main",
+      "text": "Hi — I'm Mahesh. Thanks for letting me walk you through this. I build AI products that businesses actually use, and most of what's on this page is running somewhere right now, for real people. Pick a chapter, or just let it play. You can stop me at any point."
+    },
+    {
+      "id": "build",
+      "title": "What I build",
+      "target": "#build",
+      "text": "There are four things you can hire me for. Assistants that handle real customer messages — text, voice notes, photos, whatever people actually send. Voice agents that answer the phone. Search over your own data. And full products, end to end. Every one of those links to something you can go and look at, because a claim on a portfolio isn't worth much on its own."
+    },
+    {
+      "id": "demo",
+      "title": "Retrieval, with the lid off",
+      "target": "#demo",
+      "text": "This one's my favourite. Ask it for a two thousand nineteen Swift under six lakh. Watch the right-hand side. The closest match by meaning is a Swift at six lakh forty thousand — and it gets thrown out, because six forty is not under six. Meaning search finds what you're talking about. The database decides what actually qualifies. Getting that boundary wrong is how you end up showing someone a car they can't afford."
+    },
+    {
+      "id": "work",
+      "title": "The WhatsApp copilot",
+      "target": "#work",
+      "text": "A dealership in Pune was losing buyers at eleven at night. People messaged on WhatsApp, nobody answered, and by morning they'd gone somewhere else. So I built something that picks up. Go ahead — send it a voice note in the demo and watch the CRM fill itself in beside the chat. That's the thing the sales team sees in the morning."
+    },
+    {
+      "id": "voice",
+      "title": "The voice agent, and the bug",
+      "target": "#work",
+      "text": "Real-time voice is unforgiving. My favourite bug: when a caller interrupted, the bot kept talking over them. I stopped the model generating — and it still kept talking. Took me a while to realise the audio already queued up was still playing. Stopping the speaker isn't the same as emptying the queue. That one sentence cost me an evening, and it's the thing I'd want another engineer to know about me."
+    },
+    {
+      "id": "notes",
+      "title": "How I think",
+      "target": "#notes",
+      "text": "Everything here broke in some specific way before it worked. A boolean is a state machine that forgot it had states. Some caches are load-bearing for correctness, not speed. Embeddings are good at what someone means and bad at what they require. None of that came from reading — it came from putting something in front of people and watching where it fell over."
+    },
+    {
+      "id": "about",
+      "title": "Who I am, and how to reach me",
+      "target": "#about",
+      "text": "I'm in my final year of Information Technology at PICT, Pune. Last year my team won first prize at the MVPM Hackathon for the dealership assistant. If you're building something that has to work in the real world — not just in a demo — I'd like to hear about it. Email's at the bottom. Thanks for listening."
+    }
+  ]
+}
