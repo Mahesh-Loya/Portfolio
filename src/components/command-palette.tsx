@@ -119,10 +119,12 @@ export function CommandPalette() {
         target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
         window.history.replaceState(null, "", hash);
       } else {
-        window.location.hash = hash;
+        // The section isn't on this page — most likely we're on a case study.
+        // Setting the hash alone would do nothing, so navigate home to it.
+        router.push(`/${hash}`);
       }
     },
-    [reduceMotion],
+    [reduceMotion, router],
   );
 
   const commands = useMemo<Command[]>(() => {

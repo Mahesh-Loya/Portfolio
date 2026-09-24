@@ -1,9 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { profile } from "@/content/site";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { PALETTE_OPEN_EVENT } from "@/components/command-palette";
+
+/**
+ * Section links are page-relative on the homepage and root-relative anywhere
+ * else. Without this a bare "#work" on /work/<slug> only rewrites the hash and
+ * the visitor goes nowhere, which made the nav look broken on exactly the pages
+ * people arrive at from a shared link.
+ */
+function useSectionHref() {
+  const pathname = usePathname();
+  const onHome = pathname === "/";
+  return (hash: string) => (onHome ? hash : `/${hash}`);
+}
 
 /**
  * Every tracked section, in reading order for the drawer. Contact is tracked
@@ -30,6 +43,7 @@ function MenuIcon({ open }: { open: boolean }) {
 }
 
 export function Nav() {
+  const sectionHref = useSectionHref();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [active, setActive] = useState<string | null>(null);
@@ -105,7 +119,7 @@ export function Nav() {
       }`}
     >
       <nav aria-label="Primary" className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-5 sm:gap-4 sm:px-8 md:h-16">
-        <a href="#top" className="group flex min-w-0 items-center gap-2.5">
+        <a href={sectionHref("#top")} className="group flex min-w-0 items-center gap-2.5">
           <span
             aria-hidden="true"
             className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-line-bright bg-surface/50 font-mono text-[10px] leading-none text-muted transition-colors duration-500 ease-[var(--ease-out-expo)] group-hover:border-signal group-hover:text-signal"
@@ -123,7 +137,7 @@ export function Nav() {
           {BAR_SECTIONS.map((section) => (
             <a
               key={section.id}
-              href={`#${section.id}`}
+              href={sectionHref(`#${section.id}`)}
               aria-current={active === section.id ? "true" : undefined}
               className={`rounded-full px-3.5 py-2 text-[13.5px] transition-[color,background-color] duration-500 ease-[var(--ease-out-expo)] ${
                 active === section.id
@@ -139,7 +153,7 @@ export function Nav() {
         <div className="flex shrink-0 items-center gap-2">
           {/* The conversion action. On the bar at every width, never behind the menu. */}
           <a
-            href="#contact"
+            href={sectionHref("#contact")}
             onClick={() => setMenuOpen(false)}
             aria-current={active === "contact" ? "true" : undefined}
             className={`inline-flex h-11 shrink-0 items-center rounded-full border px-4 text-[13px] transition-[color,border-color,background-color] duration-500 ease-[var(--ease-out-expo)] md:h-10 md:px-5 md:text-[13.5px] ${
@@ -187,7 +201,7 @@ export function Nav() {
           {SECTIONS.map((section, index) => (
             <li key={section.id} className="border-b border-line last:border-b-0">
               <a
-                href={`#${section.id}`}
+                href={sectionHref(`#${section.id}`)}
                 onClick={() => setMenuOpen(false)}
                 aria-current={active === section.id ? "true" : undefined}
                 className={`flex min-h-[52px] items-center justify-between py-3.5 text-[15px] transition-colors duration-500 ease-[var(--ease-out-expo)] ${

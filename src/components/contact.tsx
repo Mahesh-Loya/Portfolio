@@ -75,6 +75,15 @@ function LocalTime() {
   );
 }
 
+/**
+ * Glass rule (stated in full in `work.tsx`): the address block is a discrete
+ * object and gets glass; the statement above it is running prose and the links
+ * below it are controls, so neither takes a surface.
+ *
+ * Rhythm: close tier — py-20 md:py-28, content mt-12. The serif statement is
+ * the one sanctioned exception to the heading scale, held below the Work
+ * heading so the spine still leads.
+ */
 export function Contact() {
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | undefined>(undefined);
@@ -92,14 +101,14 @@ export function Contact() {
 
   return (
     <section id="contact" className="ambient relative border-t border-line">
-      <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 md:py-36">
+      <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:px-8 md:py-28">
         <p data-reveal className="label">
           Contact
         </p>
 
         <h2
           data-reveal
-          className="mt-8 max-w-3xl text-balance font-serif text-4xl leading-[1.1] text-bone sm:text-5xl md:text-6xl"
+          className="mt-5 max-w-[24ch] text-balance font-serif text-[2rem] leading-[1.12] text-bone sm:text-4xl md:text-[2.75rem]"
         >
           If you&apos;re building something that has to work in the real world, I&apos;d like to
           hear about it.
@@ -108,7 +117,7 @@ export function Contact() {
         <p
           data-reveal
           data-reveal-delay="80"
-          className="mt-8 max-w-xl text-pretty text-[15px] leading-relaxed text-muted sm:text-base"
+          className="mt-5 max-w-xl text-pretty text-[15px] leading-relaxed text-muted sm:text-base"
         >
           I take on freelance project work and full-time roles. Email is the most reliable way
           to reach me.
@@ -118,7 +127,7 @@ export function Contact() {
         <div
           data-reveal
           data-reveal-delay="120"
-          className="glass-panel mt-14 px-5 py-8 sm:px-9 sm:py-10 lg:px-11 lg:py-12"
+          className="glass-panel mt-12 px-5 py-8 sm:px-9 sm:py-10 lg:px-11 lg:py-12"
         >
           <a
             href={MAILTO}
@@ -136,19 +145,20 @@ export function Contact() {
             </span>
           </a>
 
-          <div className="mt-9 flex flex-wrap items-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            {/* Controls: a border and a hover, never a surface of their own. */}
             <a
               href={MAILTO}
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-xl border border-line-bright bg-gradient-to-b from-raised/85 to-surface/30 px-6 text-[14px] text-bone shadow-[inset_0_1px_0_rgb(255_255_255/0.06),0_1px_2px_rgb(0_0_0/0.26)] transition-[color,border-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] hover:border-signal hover:text-signal hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.09),0_1px_2px_rgb(0_0_0/0.26),0_16px_34px_-18px_rgb(0_0_0/0.72)]"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-xl border border-line-bright px-6 text-[14px] text-bone transition-[color,border-color] duration-500 ease-[var(--ease-out-expo)] hover:border-signal hover:text-signal"
             >
               Send an email
             </a>
             <button
               type="button"
               onClick={onCopy}
-              className="inline-flex min-h-[48px] cursor-pointer items-center rounded-xl border border-line px-6 font-mono text-[12px] uppercase tracking-[0.14em] transition-[border-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] hover:border-line-bright hover:shadow-[0_12px_28px_-18px_rgb(0_0_0/0.7)]"
+              className="inline-flex min-h-[48px] cursor-pointer items-center rounded-xl border border-line px-6 font-mono text-[12px] uppercase tracking-[0.14em] transition-[border-color] duration-500 ease-[var(--ease-out-expo)] hover:border-line-bright"
             >
-              <span className={copied ? "text-signal" : "text-faint"}>
+              <span className={copied ? "text-signal" : "text-muted"}>
                 {copied ? "Copied" : "Copy address"}
               </span>
             </button>
@@ -162,7 +172,7 @@ export function Contact() {
         <div
           data-reveal
           data-reveal-delay="200"
-          className="mt-12 flex flex-wrap items-end justify-between gap-x-10 gap-y-6"
+          className="mt-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-6"
         >
           <ul className="flex flex-wrap gap-x-10 gap-y-1">
             {LINKS.map((link) => (

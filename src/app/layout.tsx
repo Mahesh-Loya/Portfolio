@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter_Tight, JetBrains_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Reveal } from "@/components/reveal";
+import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { CommandPalette } from "@/components/command-palette";
 import { ThemeScript } from "@/components/theme-script";
 import { SITE_URL } from "@/lib/site-url";
@@ -94,6 +95,7 @@ export default function RootLayout({
         </a>
         {children}
         <Reveal />
+        <ScrollProgress />
         <CommandPalette />
       </body>
     </html>

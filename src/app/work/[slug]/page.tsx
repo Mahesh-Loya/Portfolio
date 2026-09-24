@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArchitectureDiagram } from "@/components/architecture-diagram";
+import { Footer } from "@/components/footer";
+import { Nav } from "@/components/nav";
 import { ProductShot } from "@/components/product-shot";
 import type { CaseStudy } from "@/content/site";
 import { caseStudies } from "@/content/site";
@@ -37,59 +39,129 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
+/*
+ * Shared measurements. The page is one column of reading matter, so the
+ * measure is fixed once here rather than guessed at per block, and every
+ * section hangs off the same gutter and maximum width as the homepage
+ * sections do.
+ */
+const SHELL = "px-6 md:px-10";
+const COLUMN = "mx-auto w-full max-w-5xl";
+const MEASURE = "max-w-[68ch]";
+
 function num(i: number) {
   return String(i + 1).padStart(2, "0");
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-8 flex items-center gap-4">
+    <div className="mb-10 flex items-center gap-4">
+      <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-[1px] bg-signal" />
       <p className="label whitespace-nowrap">{children}</p>
       <span aria-hidden="true" className="rule flex-1" />
     </div>
   );
 }
 
+/**
+ * One engineering decision.
+ *
+ * The card is glass so it lifts off the ground, and it is laid out as an
+ * argument: the problem and the solution sit beside each other as evidence,
+ * and the insight gets the only gold-tinted surface on the page. That tint is
+ * held at 5% — anything heavier drops gold-on-gold below AA in the light
+ * theme, the same limit the offer cards work to.
+ */
 function Decision({ decision, index }: { decision: CaseStudy["decisions"][number]; index: number }) {
   return (
-    <article className="grid gap-6 md:grid-cols-[3.5rem_minmax(0,1fr)] md:gap-8" data-reveal>
-      <p
-        aria-hidden="true"
-        className="font-mono text-[11px] leading-none tracking-[0.16em] text-signal md:pt-2"
-      >
-        {num(index)}
-      </p>
+    /* The reveal lives on the wrapper, not the panel: [data-reveal] sets its
+       own transition, and on the panel itself that would override the eased
+       glass hover. */
+    <div data-reveal>
+      <article className="glass-panel p-6 sm:p-9 lg:p-12">
+        <div className="flex items-center gap-4">
+          <span aria-hidden="true" className="font-mono text-[11px] leading-none tracking-[0.16em] text-signal">
+            {num(index)}
+          </span>
+          <span aria-hidden="true" className="rule flex-1" />
+        </div>
 
-      <div>
-        <h3 className="max-w-[28ch] text-balance text-xl leading-snug tracking-tight text-bone sm:text-2xl">
+        <h3 className="mt-7 max-w-[30ch] text-balance text-2xl leading-[1.15] tracking-tight text-bone sm:text-3xl">
           <span className="sr-only">Decision {num(index)}: </span>
           {decision.title}
         </h3>
 
-        <div className="mt-8 space-y-7 border-l border-line pl-6">
+        <div className="mt-10 grid gap-8 border-t border-line pt-9 md:grid-cols-2 md:gap-12">
           <div>
-            <p className="label mb-2">Problem</p>
-            <p className="max-w-[68ch] text-[15px] leading-relaxed text-muted md:text-base">
+            <p className="label mb-3">Problem</p>
+            <p className={`${MEASURE} text-pretty text-[15px] leading-[1.75] text-muted`}>
               {decision.problem}
             </p>
           </div>
           <div>
-            <p className="label mb-2">Solution</p>
-            <p className="max-w-[68ch] text-[15px] leading-relaxed text-muted md:text-base">
+            <p className="label mb-3">Solution</p>
+            <p className={`${MEASURE} text-pretty text-[15px] leading-[1.75] text-muted`}>
               {decision.solution}
             </p>
           </div>
         </div>
 
-        {/* The quotable part. Given the weight it earns. */}
-        <div className="mt-9 border-l-2 border-signal bg-surface px-6 py-7 md:px-8 md:py-8">
-          <p className="label mb-3 text-signal">Insight</p>
-          <p className="max-w-[46ch] text-balance font-serif text-xl leading-[1.35] text-bone sm:text-2xl">
+        {/* The payoff. Everything above it is setup. */}
+        <div className="mt-10 rounded-[14px] border border-signal/20 bg-signal/5 p-6 sm:p-8">
+          <div className="flex items-center gap-2.5">
+            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-[1px] bg-signal" />
+            <p className="label text-signal">Insight</p>
+          </div>
+          <p className="mt-5 max-w-[48ch] text-balance font-serif text-2xl leading-[1.3] text-bone sm:text-[28px]">
             {decision.insight}
           </p>
         </div>
-      </div>
-    </article>
+      </article>
+    </div>
+  );
+}
+
+/** Prev / next, as two panels rather than two hairline links. */
+function StudyLink({
+  study,
+  direction,
+  className,
+}: {
+  study: CaseStudy;
+  direction: "prev" | "next";
+  className?: string;
+}) {
+  const next = direction === "next";
+  return (
+    <Link
+      href={`/work/${study.slug}`}
+      className={`glass-panel group flex min-h-[7rem] flex-col justify-between p-6 sm:p-8 motion-safe:hover:-translate-y-1 ${
+        next ? "sm:items-end sm:text-right" : ""
+      } ${className ?? ""}`}
+    >
+      <span className="label inline-flex items-center gap-2">
+        {next ? null : (
+          <span
+            aria-hidden="true"
+            className="transition-transform duration-500 ease-[var(--ease-out-expo)] motion-safe:group-hover:-translate-x-1"
+          >
+            &#8592;
+          </span>
+        )}
+        {next ? "Next case study" : "Previous case study"}
+        {next ? (
+          <span
+            aria-hidden="true"
+            className="transition-transform duration-500 ease-[var(--ease-out-expo)] motion-safe:group-hover:translate-x-1"
+          >
+            &#8594;
+          </span>
+        ) : null}
+      </span>
+      <span className="mt-5 max-w-[24ch] text-balance text-xl leading-tight tracking-tight text-bone transition-colors duration-500 ease-[var(--ease-out-expo)] group-hover:text-signal sm:text-2xl">
+        {study.title}
+      </span>
+    </Link>
   );
 }
 
@@ -105,179 +177,225 @@ export default async function CaseStudyPage({ params }: Params) {
   const next = index < caseStudies.length - 1 ? caseStudies[index + 1] : undefined;
 
   return (
-    <main id="main" className="px-6 pb-32 md:px-10">
+    <>
+      <Nav />
 
-      <div className="mx-auto w-full max-w-5xl">
+      <main id="main">
         {/* ── header ──────────────────────────────────────────────── */}
-        <header className="pt-16 md:pt-24">
-          <Link
-            href="/#work"
-            className="group inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-faint uppercase transition-colors hover:text-signal"
-          >
-            <span aria-hidden="true" className="transition-transform group-hover:-translate-x-1">
-              &#8592;
-            </span>
-            All work
-          </Link>
-
-          <div className="mt-12 md:mt-16">
-            <p className="label">{study.period}</p>
-            <h1
-              style={{ viewTransitionName: `cs-title-${study.slug}` }}
-              className="mt-5 max-w-[16ch] text-balance text-4xl leading-[0.98] tracking-tight text-bone sm:text-5xl lg:text-6xl"
+        {/* pt clears the fixed bar (h-14 / md:h-16) with room to spare. */}
+        <section className={`ambient relative ${SHELL} pt-28 pb-4 md:pt-36`}>
+          <div className={COLUMN}>
+            <Link
+              href="/#work"
+              className="group inline-flex min-h-11 items-center gap-2.5 font-mono text-[11px] tracking-[0.14em] text-faint uppercase transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal"
             >
-              {study.title}
-            </h1>
-            <p className="mt-6 max-w-[50ch] text-pretty text-lg text-muted md:text-xl">
-              {study.kicker}
-            </p>
-            <p className="label mt-6">{study.role}</p>
-          </div>
+              <span
+                aria-hidden="true"
+                className="transition-transform duration-500 ease-[var(--ease-out-expo)] motion-safe:group-hover:-translate-x-1"
+              >
+                &#8592;
+              </span>
+              All work
+            </Link>
 
-          <dl className="mt-14 grid grid-cols-2 gap-x-8 gap-y-8 border-y border-line py-8 sm:grid-cols-4">
-            {study.metrics.map((m) => (
-              <div key={m.label}>
-                <dt className="label mb-2">{m.label}</dt>
-                <dd className="text-xl tracking-tight text-bone tabular-nums md:text-2xl">
-                  {m.value}
-                </dd>
+            <header className="mt-12 md:mt-16" data-reveal>
+              <p className="label">{study.period}</p>
+              <h1
+                style={{ viewTransitionName: `cs-title-${study.slug}` }}
+                className="mt-6 max-w-[16ch] text-balance text-4xl leading-[0.98] tracking-tight text-bone sm:text-5xl lg:text-6xl"
+              >
+                {study.title}
+              </h1>
+              <p className="mt-7 max-w-[50ch] text-pretty text-lg leading-relaxed text-muted md:text-xl">
+                {study.kicker}
+              </p>
+              <p className="label mt-7">{study.role}</p>
+            </header>
+
+            {/*
+             * The register of facts. Each cell is a column with the value
+             * pinned to the top and the label under it, so a label long
+             * enough to wrap — "Telephony accounts needed to test" — grows
+             * downwards instead of shoving its own value onto a second line
+             * and knocking the row off its baseline.
+             */}
+            <div className="mt-14 md:mt-16" data-reveal data-reveal-delay="80">
+              <dl className="glass-panel grid grid-cols-2 gap-x-8 gap-y-9 p-6 sm:grid-cols-4 sm:p-9">
+                {study.metrics.map((m) => (
+                  <div key={m.label} className="flex min-w-0 flex-col gap-2.5">
+                    <dd className="order-first text-2xl leading-none tracking-tight text-bone tabular-nums md:text-3xl">
+                      {m.value}
+                    </dd>
+                    <dt className="label text-pretty break-words">{m.label}</dt>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            <div
+              className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4"
+              data-reveal
+              data-reveal-delay="140"
+            >
+              <ul className="flex flex-wrap items-center gap-2">
+                {study.stack.map((item) => (
+                  <li
+                    key={item}
+                    className="rounded-md border border-line bg-surface/40 px-2.5 py-1.5 font-mono text-[10px] tracking-[0.06em] text-faint"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {study.live ? (
+                  <a
+                    href={study.live}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="group inline-flex min-h-11 items-center gap-2.5 rounded-full border border-signal/20 bg-signal/5 px-4 font-mono text-[11px] tracking-[0.14em] text-signal uppercase transition-[color,border-color] duration-500 ease-[var(--ease-out-expo)] hover:border-signal/55 focus-visible:border-signal/55"
+                  >
+                    View live
+                    <span
+                      aria-hidden="true"
+                      className="transition-transform duration-500 ease-[var(--ease-out-expo)] motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                    >
+                      &#8599;
+                    </span>
+                  </a>
+                ) : null}
+                {study.repo ? (
+                  <a
+                    href={study.repo}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="group inline-flex min-h-11 items-center gap-2.5 rounded-full border border-line-bright bg-surface/40 px-4 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-[color,border-color] duration-500 ease-[var(--ease-out-expo)] hover:border-line-bright hover:text-bone focus-visible:text-bone"
+                  >
+                    Source
+                    <span
+                      aria-hidden="true"
+                      className="transition-transform duration-500 ease-[var(--ease-out-expo)] motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                    >
+                      &#8599;
+                    </span>
+                  </a>
+                ) : null}
               </div>
-            ))}
-          </dl>
-
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-            <ul className="flex flex-wrap items-center gap-1.5">
-              {study.stack.map((item) => (
-                <li
-                  key={item}
-                  className="border border-line px-2 py-1 font-mono text-[10px] tracking-[0.06em] text-faint"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-            {study.live ? (
-              <a
-                href={study.live}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="group inline-flex items-center gap-2 border-b border-signal pb-0.5 font-mono text-[11px] tracking-[0.14em] text-signal uppercase"
-              >
-                View live
-                <span
-                  aria-hidden="true"
-                  className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                >
-                  &#8599;
-                </span>
-              </a>
-            ) : null}
-            {study.repo ? (
-              <a
-                href={study.repo}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="group inline-flex items-center gap-2 border-b border-line-bright pb-0.5 font-mono text-[11px] tracking-[0.14em] text-muted uppercase transition-colors hover:text-bone"
-              >
-                Source
-                <span
-                  aria-hidden="true"
-                  className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                >
-                  &#8599;
-                </span>
-              </a>
-            ) : null}
+            </div>
           </div>
-        </header>
+        </section>
 
         {/* ── the shipped thing ───────────────────────────────────── */}
         {study.shot ? (
-          <figure className="mt-20 md:mt-24" data-reveal>
-            <ProductShot src={study.shot.src} alt={study.shot.alt} priority />
-            <figcaption className="label mt-5">The shipped product</figcaption>
-          </figure>
+          <section className={`${SHELL} pt-20 md:pt-28`}>
+            <figure className={COLUMN} data-reveal>
+              <ProductShot src={study.shot.src} alt={study.shot.alt} priority />
+              <figcaption className="label mt-5">The shipped product</figcaption>
+            </figure>
+          </section>
         ) : null}
 
         {/* ── context ─────────────────────────────────────────────── */}
-        <section className={study.shot ? "mt-20 md:mt-28" : "mt-28 md:mt-36"} data-reveal>
-          <SectionLabel>Context</SectionLabel>
-          <p className="max-w-[68ch] text-pretty text-lg leading-[1.75] text-muted md:text-xl md:leading-[1.7]">
-            {study.context}
-          </p>
+        <section className={`${SHELL} pt-24 md:pt-36`}>
+          <div className={COLUMN} data-reveal>
+            <SectionLabel>Context</SectionLabel>
+            <p className={`${MEASURE} text-pretty text-lg leading-[1.8] text-muted md:text-xl`}>
+              {study.context}
+            </p>
+          </div>
         </section>
 
-        {/* ── premise ─────────────────────────────────────────────── */}
-        <section className="mt-24 md:mt-32" data-reveal>
-          <figure className="border-y border-line py-16 md:py-24">
-            <blockquote>
-              <p className="max-w-[24ch] text-balance font-serif text-3xl leading-[1.18] text-bone sm:text-4xl md:max-w-[20ch] md:text-5xl lg:text-6xl">
-                {study.premise}
-              </p>
-            </blockquote>
-            <figcaption className="label mt-10">The premise</figcaption>
-          </figure>
+        {/*
+         * ── premise ──────────────────────────────────────────────
+         * The one sentence the whole project reduces to, so it is given a
+         * stage: its own light, rules above and below, and display-size
+         * serif set to the widest measure on the page. Nothing else here
+         * competes with the h1 for scale.
+         */}
+        <section className={`ambient relative ${SHELL} pt-28 md:pt-40`}>
+          <div className={COLUMN}>
+            <figure data-reveal>
+              <div aria-hidden="true" className="rule" />
+              <blockquote className="py-16 md:py-24">
+                <p className="max-w-[22ch] text-balance font-serif text-[2.25rem] leading-[1.1] text-bone sm:text-5xl md:max-w-[20ch] md:text-6xl lg:text-[4.25rem]">
+                  {study.premise}
+                </p>
+              </blockquote>
+              <div className="flex items-center gap-4">
+                <span aria-hidden="true" className="h-px w-12 shrink-0 bg-signal/60" />
+                <figcaption className="label">The premise</figcaption>
+                <span aria-hidden="true" className="rule flex-1" />
+              </div>
+            </figure>
+          </div>
         </section>
 
         {/* ── architecture ────────────────────────────────────────── */}
-        <section className="mt-24 md:mt-32" data-reveal>
-          <SectionLabel>Architecture</SectionLabel>
-          <p className="mb-10 max-w-[68ch] text-[15px] leading-relaxed text-muted md:text-base">
-            The system end to end, one stage at a time. Step through it — each stage says what it
-            does and what it runs on.
-          </p>
-          <ArchitectureDiagram pipeline={study.pipeline} />
+        <section className={`${SHELL} pt-28 md:pt-40`}>
+          <div className={COLUMN} data-reveal>
+            <SectionLabel>Architecture</SectionLabel>
+            <p className={`${MEASURE} mb-12 text-pretty leading-[1.75] text-muted`}>
+              The system end to end, one stage at a time. Step through it — each stage says what it
+              does and what it runs on.
+            </p>
+            <ArchitectureDiagram pipeline={study.pipeline} />
+          </div>
         </section>
 
         {/* ── decisions ───────────────────────────────────────────── */}
-        <section className="mt-28 md:mt-40">
-          <div data-reveal>
-            <SectionLabel>Engineering decisions</SectionLabel>
-            <p className="mb-16 max-w-[68ch] text-[15px] leading-relaxed text-muted md:mb-20 md:text-base">
-              The choices that shaped the build, and what each one turned out to be teaching.
-            </p>
-          </div>
-          <div className="flex flex-col gap-20 md:gap-28">
-            {study.decisions.map((decision, i) => (
-              <Decision key={decision.title} decision={decision} index={i} />
-            ))}
+        <section className={`ambient relative ${SHELL} pt-32 md:pt-48`}>
+          <div className={COLUMN}>
+            <div data-reveal>
+              <SectionLabel>Engineering decisions</SectionLabel>
+              <p className={`${MEASURE} mb-14 text-pretty leading-[1.75] text-muted md:mb-20`}>
+                The choices that shaped the build, and what each one turned out to be teaching.
+              </p>
+            </div>
+            <div className="flex flex-col gap-8 md:gap-10">
+              {study.decisions.map((decision, i) => (
+                <Decision key={decision.title} decision={decision} index={i} />
+              ))}
+            </div>
           </div>
         </section>
 
         {/* ── prev / next ─────────────────────────────────────────── */}
-        <nav aria-label="Case studies" className="mt-32 border-t border-line pt-10 md:mt-40">
-          <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
-            {prev ? (
-              <Link href={`/work/${prev.slug}`} className="group max-w-[24ch]">
-                <p className="label mb-3">&#8592; Previous</p>
-                <p className="text-xl tracking-tight text-bone transition-colors group-hover:text-signal sm:text-2xl">
-                  {prev.title}
-                </p>
-              </Link>
-            ) : (
-              <span aria-hidden="true" />
-            )}
-            {next ? (
-              <Link href={`/work/${next.slug}`} className="group max-w-[24ch] sm:text-right">
-                <p className="label mb-3">Next &#8594;</p>
-                <p className="text-xl tracking-tight text-bone transition-colors group-hover:text-signal sm:text-2xl">
-                  {next.title}
-                </p>
-              </Link>
-            ) : (
-              <span aria-hidden="true" />
-            )}
-          </div>
+        <section className={`${SHELL} pt-32 pb-28 md:pt-44 md:pb-40`}>
+          <nav aria-label="Case studies" className={COLUMN} data-reveal>
+            <div className="mb-10 flex items-center gap-4">
+              <p className="label whitespace-nowrap">Keep reading</p>
+              <span aria-hidden="true" className="rule flex-1" />
+            </div>
 
-          <Link
-            href="/#work"
-            className="mt-14 inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-faint uppercase transition-colors hover:text-signal"
-          >
-            <span aria-hidden="true">&#8592;</span>
-            Back to all work
-          </Link>
-        </nav>
-      </div>
-    </main>
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+              {prev ? <StudyLink study={prev} direction="prev" /> : null}
+              {next ? (
+                <StudyLink
+                  study={next}
+                  direction="next"
+                  className={prev ? "" : "sm:col-start-2"}
+                />
+              ) : null}
+            </div>
+
+            <Link
+              href="/#work"
+              className="group mt-12 inline-flex min-h-11 items-center gap-2.5 font-mono text-[11px] tracking-[0.14em] text-faint uppercase transition-colors duration-500 ease-[var(--ease-out-expo)] hover:text-signal focus-visible:text-signal"
+            >
+              <span
+                aria-hidden="true"
+                className="transition-transform duration-500 ease-[var(--ease-out-expo)] motion-safe:group-hover:-translate-x-1"
+              >
+                &#8592;
+              </span>
+              Back to all work
+            </Link>
+          </nav>
+        </section>
+      </main>
+
+      <Footer />
+    </>
   );
 }

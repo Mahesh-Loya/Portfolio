@@ -1,4 +1,6 @@
 import { proofPoints } from "@/content/site";
+import { Stagger, StaggerItem } from "./motion/stagger";
+import { CountUp } from "./motion/count-up";
 
 /**
  * A band of verifiable facts, sitting directly under the hero — read as an
@@ -28,30 +30,39 @@ export function ProofStrip() {
             </p>
           </div>
 
-          <ul className="grid grid-cols-2 md:grid-cols-4">
+          {/* Entries land left to right, and each number counts itself in just
+              behind its own entry. Values that are not plain integers — the
+              prize figure, "Daily" — are printed as written; CountUp declines
+              rather than guesses. */}
+          <Stagger
+            as="ul"
+            className="grid grid-cols-2 md:grid-cols-4"
+            delay={0.05}
+            step={0.1}
+          >
             {proofPoints.map((point, i) => (
-              <li
+              <StaggerItem
+                as="li"
                 key={point.label}
-                data-reveal
-                data-reveal-delay={i * 90}
+                index={i}
                 className="flex flex-col gap-2 border-line px-6 py-8 even:border-l [&:nth-child(n+3)]:border-t sm:px-8 sm:py-10 md:border-l md:first:border-l-0 md:[&:nth-child(n+3)]:border-t-0"
               >
                 <span aria-hidden="true" className="mb-2 block h-2.5 w-px bg-line-bright" />
-                <span
-                  className="font-sans font-medium leading-none tracking-[-0.02em] tabular-nums text-bone"
+                <CountUp
+                  value={point.value}
+                  delay={0.25 + i * 0.1}
+                  className="block font-sans font-medium leading-none tracking-[-0.02em] tabular-nums text-bone"
                   style={{ fontSize: "clamp(1.5rem, 3.6vw, 2.1rem)" }}
-                >
-                  {point.value}
-                </span>
+                />
                 <span className="font-mono text-[0.6875rem] uppercase leading-snug tracking-[0.1em] text-muted">
                   {point.label}
                 </span>
                 <span className="mt-1 text-pretty text-[0.75rem] leading-relaxed text-faint">
                   {point.note}
                 </span>
-              </li>
+              </StaggerItem>
             ))}
-          </ul>
+          </Stagger>
         </div>
       </div>
     </section>

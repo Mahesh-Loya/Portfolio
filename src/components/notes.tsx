@@ -7,6 +7,11 @@ import { caseStudies } from "@/content/site";
 /**
  * Surfaces the sharpest engineering insight from each case study.
  * These are the quotable lines — the shareable surface of the site.
+ *
+ * Glass rule (stated in full in `work.tsx`): a note is a discrete object, so it
+ * gets glass; the header is prose and the expander is a control, so neither
+ * does. Rhythm: support tier — py-24 md:py-32, h2 text-3xl/sm:text-4xl,
+ * content mt-14.
  */
 const notes = caseStudies.flatMap((study) =>
   study.decisions.map((decision) => ({
@@ -51,7 +56,7 @@ function Note({
           </Link>
         </div>
 
-        <h3 className="mt-7 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted">
+        <h3 className="mt-6 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted">
           {note.title}
         </h3>
 
@@ -88,21 +93,24 @@ export function Notes() {
     <section
       id="notes"
       aria-labelledby="notes-heading"
-      className="ambient relative border-t border-line px-6 py-24 sm:py-32 lg:px-10"
+      className="ambient relative border-t border-line px-6 py-24 md:py-32 lg:px-10"
     >
       <div className="mx-auto max-w-6xl">
         <header className="max-w-2xl" data-reveal>
           <p className="label">Engineering notes</p>
-          <h2 id="notes-heading" className="mt-6 text-3xl tracking-[-0.03em] sm:text-4xl">
+          <h2
+            id="notes-heading"
+            className="mt-5 text-balance text-3xl leading-tight tracking-[-0.03em] text-bone sm:text-4xl"
+          >
             What the work actually taught me
           </h2>
-          <p className="mt-6 max-w-xl text-pretty text-muted">
+          <p className="mt-5 max-w-xl text-pretty leading-relaxed text-muted">
             Every system here failed in some specific way before it worked. The line is
             the lesson; open a card for what it cost.
           </p>
         </header>
 
-        <ol id={listId} className="mt-16 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <ol id={listId} className="mt-14 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {notes.map((note, i) => (
             <Note
               key={`${note.slug}-${i}`}
@@ -120,7 +128,8 @@ export function Notes() {
               onClick={() => setExpanded((open) => !open)}
               aria-expanded={expanded}
               aria-controls={listId}
-              className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-xl border border-line bg-gradient-to-b from-raised/70 to-surface/20 px-6 font-mono text-[10px] uppercase tracking-[0.14em] text-muted shadow-[inset_0_1px_0_rgb(255_255_255/0.05),0_1px_2px_rgb(0_0_0/0.26)] transition-[color,border-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] hover:border-line-bright hover:text-bone hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_1px_2px_rgb(0_0_0/0.26),0_12px_28px_-16px_rgb(0_0_0/0.7)]"
+              /* A control, not an object: border and hover, no surface. */
+              className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-xl border border-line px-6 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-[color,border-color] duration-500 ease-[var(--ease-out-expo)] hover:border-line-bright hover:text-bone"
             >
               <span aria-hidden="true" className="text-signal">
                 {expanded ? "\u2212" : "+"}

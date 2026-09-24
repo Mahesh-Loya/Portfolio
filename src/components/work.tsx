@@ -17,18 +17,44 @@ import { VyavsayDemo } from "./vyavsay-demo";
 const VISIBLE_STACK = 5;
 
 /**
- * The shared surface for a panel that isn't holding a live frame: a generous
- * radius, a gentle top-lit fill instead of a flat one, a hairline highlight
- * along the top edge and a layered shadow underneath. The point is that the
- * panel sits on the page rather than being drawn onto it. Tuned to sit one
- * step quieter than `.glass-panel`, which is reserved for the live frames.
+ * ── THE GLASS RULE ──────────────────────────────────────────────────────────
+ * One rule, applied identically in every homepage section:
+ *
+ *   Glass (`.glass-panel`) is for a discrete OBJECT — something you could lift
+ *   off the page and hand to someone: a project panel, a note card, the
+ *   capability stack, the award, the contact block, the repository strip.
+ *
+ *   Running prose never gets glass. Section headers, standfirsts, the About
+ *   paragraph and anything that is simply text on the page sit directly on the
+ *   void with no surface of their own.
+ *
+ *   Glass never nests. Divisions inside an object are hairlines
+ *   (`border-line`) and space — never a second pane.
+ *
+ *   Controls are not objects: buttons and links carry a border and a hover,
+ *   never a glass surface.
+ *
+ * `.bracketed` is the one further distinction and it is not decoration — it
+ * marks an object that encloses something *running*, so it appears only on the
+ * live frames and the offer cards that point at live work.
+ * ────────────────────────────────────────────────────────────────────────────
+ *
+ * ── THE PAGE RHYTHM ─────────────────────────────────────────────────────────
+ * Three weights, so the page has a spine instead of six equal shouts:
+ *
+ *   lead     py-32 md:py-44   h2 text-4xl → lg:text-[3.25rem]   content mt-20
+ *   support  py-24 md:py-32   h2 text-3xl → sm:text-4xl         content mt-14
+ *   close    py-20 md:py-28   h2 text-3xl → sm:text-4xl         content mt-12
+ *
+ * Work is the only lead. Offers, Notes and the Capability map are support.
+ * Credentials and Contact are the close, and Contact's serif statement is the
+ * single sanctioned exception to the heading scale — the close is allowed one
+ * oversized line, held deliberately below this section's heading.
+ *
+ * Inside any header the steps never vary: label → mt-5 → heading → mt-5 → deck.
+ * ────────────────────────────────────────────────────────────────────────────
  */
-const PANEL =
-  "rounded-[18px] border border-line bg-gradient-to-b from-raised/70 to-surface/20 " +
-  "shadow-[inset_0_1px_0_rgb(255_255_255/0.05),0_1px_2px_rgb(0_0_0/0.26),0_18px_44px_-24px_rgb(0_0_0/0.60)] " +
-  "transition-[border-color,box-shadow] duration-500 ease-[var(--ease-out-expo)] " +
-  "hover:border-line-bright " +
-  "hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_1px_2px_rgb(0_0_0/0.26),0_28px_60px_-28px_rgb(0_0_0/0.72)]";
+const PANEL = "glass-panel";
 
 function ordinal(index: number): string {
   return String(index + 1).padStart(2, "0");
@@ -90,12 +116,31 @@ function StackChips({ items, cap = VISIBLE_STACK }: { items: string[]; cap?: num
   );
 }
 
-function Metrics({ metrics, size = "sm" }: { metrics: CaseStudy["metrics"]; size?: "sm" | "lg" }) {
+/**
+ * `band` runs the numbers across the full measure of a panel instead of
+ * stacking them in a side column — the old arrangement was what left a tall
+ * hole beside them on the wider panels.
+ */
+function Metrics({
+  metrics,
+  size = "sm",
+  layout = "wrap",
+}: {
+  metrics: CaseStudy["metrics"];
+  size?: "sm" | "lg";
+  layout?: "wrap" | "band";
+}) {
   return (
-    <dl className="flex flex-wrap gap-x-10 gap-y-6 sm:gap-x-14">
+    <dl
+      className={
+        layout === "band"
+          ? "grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4 sm:gap-x-10"
+          : "flex flex-wrap gap-x-10 gap-y-6 sm:gap-x-14"
+      }
+    >
       {metrics.map((m) => (
         <div key={m.label} className="min-w-0">
-          <dt className="label mb-2">{m.label}</dt>
+          <dt className="label mb-2 text-pretty">{m.label}</dt>
           <dd
             className={`tracking-tight text-bone tabular-nums ${
               size === "lg" ? "text-2xl md:text-3xl" : "text-xl"
@@ -202,7 +247,7 @@ function FeaturePanel({ study, index }: { study: CaseStudy; index: number }) {
         {study.live ? <LiveTag /> : null}
       </div>
 
-      <h3 className="mt-7 text-balance text-4xl leading-[0.98] tracking-tight text-bone sm:text-5xl lg:text-6xl">
+      <h3 className="mt-6 text-balance text-4xl leading-[0.98] tracking-tight text-bone sm:text-5xl lg:text-6xl">
         <Link
           href={`/work/${study.slug}`}
           style={titleTransition(study.slug)}
@@ -218,15 +263,20 @@ function FeaturePanel({ study, index }: { study: CaseStudy; index: number }) {
         <VyavsayDemo />
       </div>
 
-      <div className="mt-14 grid gap-12 border-t border-line pt-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
+      {/* Numbers first and full-measure: the register under the demo. */}
+      <div className="mt-12 border-t border-line pt-10">
+        <Metrics metrics={study.metrics} size="lg" layout="band" />
+      </div>
+
+      {/* Two short columns rather than one short and one long. */}
+      <div className="mt-10 grid gap-9 border-t border-line pt-10 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
         <div>
           <blockquote className="max-w-[34ch] text-balance font-serif text-2xl leading-[1.28] text-bone sm:text-3xl">
             {study.premise}
           </blockquote>
           <More>{study.context}</More>
         </div>
-        <div className="flex flex-col gap-9">
-          <Metrics metrics={study.metrics} size="lg" />
+        <div className="flex flex-col gap-7 lg:pt-1">
           <StackChips items={study.stack} />
           <CaseLink slug={study.slug} title={study.title} />
         </div>
@@ -277,8 +327,8 @@ function EditorialPanel({ study, index }: { study: CaseStudy; index: number }) {
         </div>
       </div>
 
-      <div className="mt-12 flex flex-col gap-7 border-t border-line pt-10">
-        <Metrics metrics={study.metrics} />
+      <div className="mt-10 flex flex-col gap-7 border-t border-line pt-10">
+        <Metrics metrics={study.metrics} layout="band" />
         <StackChips items={study.stack} />
       </div>
     </article>
@@ -301,7 +351,12 @@ function LiveFrame({
     <div className="glass-panel bracketed p-5 sm:p-7 lg:p-8">
       <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
         <div className={`lg:col-span-7 ${mirrored ? "lg:order-2 lg:col-start-6" : ""}`}>{media}</div>
-        <div className={`flex flex-col lg:col-span-5 ${mirrored ? "lg:order-1 lg:col-start-1" : ""}`}>
+        {/* Centred, not bottom-pinned: a text column shorter than the frame
+            beside it now sits against the middle of the media instead of
+            leaving one tall hole under it. */}
+        <div
+          className={`flex flex-col lg:col-span-5 lg:justify-center ${mirrored ? "lg:order-1 lg:col-start-1" : ""}`}
+        >
           {children}
         </div>
       </div>
@@ -349,7 +404,7 @@ function LiveStudyPanel({
         </blockquote>
         <More>{study.context}</More>
 
-        <div className="mt-auto flex flex-col gap-6 pt-10">
+        <div className="mt-8 flex flex-col gap-6 border-t border-line pt-8">
           <Metrics metrics={study.metrics} />
           <StackChips items={study.stack} cap={4} />
           <CaseLink slug={study.slug} title={study.title} />
@@ -391,7 +446,7 @@ function LiveEntryPanel({
         <p className="mt-4 max-w-[40ch] text-pretty text-sm leading-relaxed text-muted">{lead}</p>
         {rest ? <More>{rest}</More> : null}
 
-        <div className="mt-auto flex flex-col gap-6 pt-10">
+        <div className="mt-8 flex flex-col gap-5 border-t border-line pt-8">
           <StackChips items={entry.tech} cap={4} />
           <RepoLinks entry={entry} />
         </div>
@@ -549,27 +604,28 @@ export function Work() {
     <section
       id="work"
       aria-labelledby="work-heading"
-      className="ambient relative scroll-mt-24 px-6 py-28 md:px-10 md:py-40"
+      /* Lead tier: the spine of the page, and the only section at this weight. */
+      className="ambient relative scroll-mt-24 px-6 py-32 md:px-10 md:py-44"
     >
       <div className="mx-auto w-full max-w-6xl">
-        <header className="mb-20 md:mb-28" data-reveal>
+        <header data-reveal>
           <p className="label">Work</p>
           <h2
             id="work-heading"
-            className="mt-6 max-w-[22ch] text-balance text-3xl leading-tight tracking-tight text-bone sm:text-4xl"
+            className="mt-5 max-w-[20ch] text-balance text-4xl leading-[1.04] tracking-tight text-bone sm:text-5xl lg:text-[3.25rem]"
           >
             Six projects, each one here to be opened rather than read about.
           </h2>
-          <p className="mt-6 max-w-[54ch] text-pretty text-muted">
+          <p className="mt-5 max-w-[54ch] text-pretty text-lg text-muted">
             Three of them are running live on this page; the rest link to the code, or to the
             full write-up.
           </p>
         </header>
 
-        <div className="flex flex-col gap-16 md:gap-24">{slots.map(renderSlot)}</div>
+        <div className="mt-20 flex flex-col gap-16 md:gap-24">{slots.map(renderSlot)}</div>
 
         <div
-          className={`${PANEL} mt-20 flex flex-wrap items-center gap-x-8 gap-y-2 px-6 py-4 sm:px-8 md:mt-28`}
+          className={`${PANEL} mt-16 flex flex-wrap items-center gap-x-8 gap-y-2 px-6 py-4 sm:px-8 md:mt-20`}
           data-reveal
         >
           <span className="label">Also on GitHub</span>

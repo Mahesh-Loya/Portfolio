@@ -3,12 +3,26 @@
 import { motion, useReducedMotion } from "motion/react";
 import { profile } from "@/content/site";
 import { ShaderField } from "./shader-field";
+import { Stagger, StaggerItem } from "./motion/stagger";
+import { Parallax } from "./motion/parallax";
 
 const NAME_CHARS = Array.from(profile.name);
 
 /** Total name entrance stays under 900ms: 10 steps x 30ms + 520ms duration. */
 const CHAR_STEP = 0.03;
 const CHAR_DURATION = 0.52;
+
+/**
+ * The hero arrives as a sequence, not as a single event: chip, then the name,
+ * then everything that supports it. The name runs on its own per-character
+ * clock, so it is given the gap between index 0 and index 3 to itself and the
+ * body copy starts landing while its last characters are still settling —
+ * overlapped rather than queued, which is what keeps ~1.6s of choreography from
+ * feeling like a wait.
+ */
+const SEQUENCE_DELAY = 0.06;
+const SEQUENCE_STEP = 0.085;
+const NAME_DELAY = 0.18;
 
 /**
  * The clause a stranger has to leave with. It is split out of the pitch at
@@ -32,10 +46,14 @@ export function Hero() {
   const reduced = useReducedMotion();
 
   return (
-    <section
+    <Stagger
+      as="section"
       id="main"
       aria-label="Introduction"
       className="relative isolate flex min-h-svh flex-col overflow-hidden"
+      trigger="mount"
+      delay={SEQUENCE_DELAY}
+      step={SEQUENCE_STEP}
     >
       {/* Background: the field resolving from noise into signal. */}
       <div
@@ -45,14 +63,20 @@ export function Hero() {
           WebkitMaskImage: "linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%)",
         }}
       >
-        {/* Held back so the resolved waveform reads as texture behind the
-            type rather than competing with it for the same space. */}
-        <ShaderField className="absolute inset-0 opacity-[0.42]" />
+        {/* A 2.5% upward drift on scroll — enough to separate the field from the
+            type it sits behind, far too little to read as an effect. It moves
+            up rather than down so the uncovered edge is the bottom one, which
+            the mask has already faded to nothing. */}
+        <Parallax className="absolute inset-0" distance={-2.5}>
+          {/* Held back so the resolved waveform reads as texture behind the
+              type rather than competing with it for the same space. */}
+          <ShaderField className="absolute inset-0 opacity-[0.42]" />
+        </Parallax>
       </div>
 
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 pb-14 pt-28 sm:px-8 sm:pb-16 sm:pt-36">
         {/* Availability — a statement of fact, not a sales line. */}
-        <div data-reveal className="w-fit max-w-full">
+        <StaggerItem index={0} className="w-fit max-w-full">
           {/* Reads as a lit chip sitting on the page: gradient fill, hairline
               top highlight, one soft shadow. */}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl border border-line-bright/70 bg-gradient-to-b from-raised/75 to-surface/45 py-2 pl-3.5 pr-5 shadow-[inset_0_1px_0_rgb(255_255_255/0.06),0_1px_2px_rgb(0_0_0/0.28),0_12px_26px_-16px_rgb(0_0_0/0.65)] backdrop-blur-md sm:rounded-full">
@@ -68,7 +92,7 @@ export function Hero() {
               {profile.status.detail}
             </span>
           </div>
-        </div>
+        </StaggerItem>
 
         {/* Name — the dominant typographic element. */}
         <h1
@@ -92,7 +116,7 @@ export function Hero() {
                   animate={{ opacity: 1, y: "0em", filter: "blur(0px)" }}
                   transition={{
                     duration: CHAR_DURATION,
-                    delay: i * CHAR_STEP,
+                    delay: NAME_DELAY + i * CHAR_STEP,
                     ease: [0.16, 1, 0.3, 1],
                   }}
                 >
@@ -106,16 +130,16 @@ export function Hero() {
         {/* Role / place, set as structural metadata. */}
         {/* Sits over the brightest part of the shader, so it needs more
             contrast than the default label grey. */}
-        <p data-reveal data-reveal-delay="220" className="label mt-6 text-muted sm:mt-7">
+        <StaggerItem as="p" index={3} className="label mt-6 text-muted sm:mt-7">
           {profile.role} <span className="text-line-bright">/</span> {profile.location}
-        </p>
+        </StaggerItem>
 
         <div className="mt-8 grid gap-x-12 gap-y-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start">
           {/* The pitch — what he builds, in the words someone deciding whether
               to hire him would use. First thing read after the name. */}
-          <p
-            data-reveal
-            data-reveal-delay="300"
+          <StaggerItem
+            as="p"
+            index={4}
             className="max-w-[46ch] font-sans leading-[1.35] tracking-[-0.015em] text-pretty text-muted"
             style={{ fontSize: "clamp(1.35rem, 2.6vw, 1.95rem)" }}
           >
@@ -124,13 +148,12 @@ export function Hero() {
               <span className="text-bone">{pitchParts.emphasis}</span>
             ) : null}
             {pitchParts.after}
-          </p>
+          </StaggerItem>
 
           {/* The thesis, demoted to a quiet aside — still the best line on the
               site, no longer the first argument the site makes. */}
-          <div
-            data-reveal
-            data-reveal-delay="380"
+          <StaggerItem
+            index={5}
             className="max-w-[34ch] border-t border-line pt-6 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-1"
           >
             <p
@@ -139,13 +162,12 @@ export function Hero() {
             >
               {profile.thesis}
             </p>
-          </div>
+          </StaggerItem>
         </div>
 
         {/* Actions — see the work, start a conversation, read the résumé. */}
-        <div
-          data-reveal
-          data-reveal-delay="460"
+        <StaggerItem
+          index={6}
           className="mt-11 flex flex-wrap items-center gap-x-3 gap-y-3 sm:mt-12"
         >
           {/* The single most considered control on the page: flat gold so the
@@ -204,12 +226,11 @@ export function Hero() {
               LinkedIn
             </a>
           </nav>
-        </div>
+        </StaggerItem>
 
         {/* Stack — for the recruiter scanning rather than reading. */}
-        <div
-          data-reveal
-          data-reveal-delay="540"
+        <StaggerItem
+          index={7}
           className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-2.5"
         >
           <span className="label mr-1">Stack</span>
@@ -221,12 +242,12 @@ export function Hero() {
               {item}
             </span>
           ))}
-        </div>
+        </StaggerItem>
       </div>
 
       {/* Scroll cue */}
       <div className="mx-auto w-full max-w-6xl px-6 pb-10 sm:px-8">
-        <div data-reveal data-reveal-delay="620" className="flex items-center gap-3">
+        <StaggerItem index={8} className="flex items-center gap-3">
           <span className="label">Scroll</span>
           <span aria-hidden className="h-px w-14 bg-gradient-to-r from-line-bright to-transparent" />
           <motion.span
@@ -235,8 +256,8 @@ export function Hero() {
             animate={reduced ? undefined : { x: [0, 14, 0], opacity: [0.25, 1, 0.25] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           />
-        </div>
+        </StaggerItem>
       </div>
-    </section>
+    </Stagger>
   );
 }

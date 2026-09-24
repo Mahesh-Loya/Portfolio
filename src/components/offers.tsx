@@ -7,6 +7,10 @@ import { offers } from "@/content/site";
  * claim and one sentence of evidence; the rest of the argument stays in the DOM
  * behind a native disclosure, so the page reads as an instrument panel while
  * losing none of the substance (or its findability in browser search).
+ *
+ * Glass rule (stated in full in `work.tsx`): a card is a discrete object, so it
+ * gets glass. The header above it is running prose, so it gets none.
+ * Rhythm: support tier — py-24 md:py-32, h2 text-3xl/sm:text-4xl, content mt-14.
  */
 
 /**
@@ -79,10 +83,10 @@ function Card({ offer, index }: { offer: Offer; index: number }) {
         </details>
       ) : null}
 
-      <div className="mt-auto pt-10">
+      <div className="mt-auto pt-9">
         <TechChips tech={offer.tech} />
 
-        <div className="mt-7 border-t border-line pt-7">
+        <div className="mt-6 border-t border-line pt-6">
           {/* The one place the gold is allowed to carry a surface. The tint is
               held at 5% and the hover firms up the border rather than the fill,
               because a heavier fill drops signal-on-signal below AA in the
@@ -110,21 +114,24 @@ export function Offers() {
     <section
       id="build"
       aria-labelledby="build-heading"
-      className="ambient relative border-t border-line px-6 py-28 sm:py-32 lg:px-10"
+      className="ambient relative border-t border-line px-6 py-24 md:py-32 lg:px-10"
     >
       <div className="mx-auto max-w-6xl">
         <header className="max-w-2xl" data-reveal>
           <p className="label">What I build</p>
-          <h2 id="build-heading" className="mt-5 text-2xl tracking-[-0.03em] sm:text-3xl">
+          <h2
+            id="build-heading"
+            className="mt-5 text-balance text-3xl leading-tight tracking-[-0.03em] text-bone sm:text-4xl"
+          >
             Four things you can hire me to build
           </h2>
-          <p className="mt-5 max-w-xl text-pretty text-sm leading-relaxed text-muted">
+          <p className="mt-5 max-w-xl text-pretty leading-relaxed text-muted">
             Each one is something I have already shipped — follow the link on a card to
             the working thing behind the claim.
           </p>
         </header>
 
-        <ol className="mt-16 grid gap-5 md:grid-cols-2 md:gap-6">
+        <ol className="mt-14 grid gap-5 md:grid-cols-2 md:gap-6">
           {offers.map((offer, i) => (
             <Card key={offer.title} offer={offer} index={i} />
           ))}
