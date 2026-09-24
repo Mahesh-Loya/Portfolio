@@ -39,39 +39,65 @@ script, never part of `next build`. Deploys therefore need no API key and cost n
 
 ## The avatar
 
-### Recommendation: a point-cloud portrait
+**Decision (revised 2026-09-24):** a real 3D stylized character of Mahesh, present both in
+the hero and as the narrator of the tour. This supersedes the point-cloud portrait
+originally proposed here; the owner supplied reference images of character-led portfolios
+and chose that direction explicitly.
 
-A real photograph of Mahesh, sampled into a 3D point cloud and rendered in WebGL. Each
-pixel's luminance becomes a point displaced along Z, so the portrait has genuine depth and
-parallax. It drifts gently when idle, tilts subtly with cursor or device orientation, and
-the points scatter and settle in response to the actual amplitude of his voice while a
-chapter plays.
+### The asset
 
-Why this over the alternatives:
+Built with Ready Player Me from a selfie, exported as `.glb` and committed to the repo so
+nothing depends on a third-party service at runtime.
 
-- **It is genuinely 3D and genuinely him** — the two things the brief asked for.
-- **It cannot be uncanny**, because it never pretends to lip-sync. Nothing looks worse than
-  a mouth that is almost right.
-- **It is on-brand.** The site is already built from grain, dithering and waveforms. A
-  portrait made of points that react to a voice is the same idea applied to a face.
-- **It costs nothing and needs no extra service** — one photo, no ML model, no subscription.
-- It stays under ~200KB and renders on a phone.
+The export must request morph targets:
 
-### On the photoreal video avatar
+```
+https://models.readyplayer.me/<id>.glb?morphTargets=Oculus%20Visemes,ARKit&textureAtlas=1024&quality=medium
+```
 
-This was the stated preference, so here is the honest trade-off rather than a silent
-override.
+The Oculus viseme set gives the mouth shapes needed for speech; the ARKit set gives
+`eyeBlinkLeft` / `eyeBlinkRight` for idle blinking. Without those query parameters the
+avatar exports with no facial morph targets at all and cannot speak — this is the single
+easiest thing to get wrong.
 
-A generated talking-head video (HeyGen, D-ID, Synthesia class) would need a paid
-subscription, a separate render per chapter, and 2–5MB of video per chapter. Lip-sync
-quality on Indian-accented English is inconsistent, and the failure mode is not "slightly
-off" but "unsettling". It also reads as a recognisable template to exactly the technical
-audience this site is built for — the opposite of what the rest of the site signals.
+Target under 3MB. Half-body is preferred over full-body: it reads better at hero scale and
+weighs less.
 
-**Therefore:** the avatar is built behind a `Presenter` interface with the point-cloud
-portrait as the first implementation. If the video avatar is still wanted after seeing the
-portrait running, it drops in as a second implementation without touching the tour, the
-audio pipeline, or the captions. The decision stays reversible and costs nothing to defer.
+### Rendering
+
+`three` with `@react-three/fiber` and `@react-three/drei`. These are the first runtime
+dependencies added to the project and they are not small, so:
+
+- The 3D layer is loaded with `next/dynamic` and `ssr: false`, never in the main bundle.
+- The hero renders a lightweight poster immediately and swaps in the 3D avatar after first
+  paint, during idle time. **The LCP element must remain the name, not the avatar.**
+- The canvas pauses when offscreen and when the tab is hidden.
+- Under `prefers-reduced-motion`, the avatar renders as a still pose with no idle motion.
+- If WebGL is unavailable or the model fails to load, the poster stays. The page must never
+  show an empty slot.
+
+### Behaviour
+
+**Idle:** slow breathing, subtle head sway, and periodic blinking driven by the ARKit
+morph targets. The head tracks the cursor gently within a limited range — enough to feel
+alive, never enough to look like it is staring.
+
+**Speaking:** driven by the tour audio.
+- Jaw and mouth openness follow the live amplitude from a Web Audio `AnalyserNode`, which
+  is what makes speech read as speech.
+- On top of that, viseme morph targets are driven from the ElevenLabs character-level
+  timestamps, mapped grapheme to viseme. This is an approximation, not phoneme-accurate
+  lip-sync, and that is an accepted trade-off: at hero scale it reads correctly.
+- Between chapters the avatar returns to idle.
+
+### Hero integration
+
+The avatar sits beside the name, not behind it. The existing hero — name, pitch, actions,
+stack row — keeps its structure and copy; the avatar occupies the space currently empty on
+the right at large breakpoints.
+
+Below `lg` the avatar is hidden entirely rather than shrunk: a 3MB model on a phone, for
+decoration, is not a trade worth making. The hero already reads well on mobile without it.
 
 ## The guided tour
 
@@ -216,9 +242,9 @@ two voices must never overlap.
 1. **Voice samples** for cloning — two to three minutes of clean speech, one take, quiet
    room, no music, speaking naturally rather than reading stiffly. ElevenLabs Instant Voice
    Cloning needs consent that the voice is his own, which it is.
-2. **A photo** for the avatar — high resolution, face well lit, plain or simple background,
-   looking at the camera. The point cloud is built from luminance, so contrast matters more
-   than colour.
+2. **A Ready Player Me avatar** — create it from a selfie at readyplayer.me, then export the
+   `.glb` with the morph-target query parameters above and save it to `public/avatar/`.
+   Without those parameters the face cannot animate.
 3. **An ElevenLabs API key**, in `.env.local` as `ELEVENLABS_API_KEY`. Used only by
    `npm run voice`, never at runtime, never committed.
 4. **A decision on the call script's language** — the demo is more convincing in Hindi or
