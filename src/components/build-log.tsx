@@ -3,20 +3,22 @@ import type { BuildLogEntry } from "@/content/site";
 import { alsoOnGithub, buildLog, profile } from "@/content/site";
 
 /**
- * Bento spans, resolved from the data rather than hardcoded per project.
- *
- * Featured entries take half the row each; among the rest, the one carrying a
- * screenshot earns the wide cell and the others fill what is left. The `lg:`
- * prefix means every rule collapses to a single column on small screens, and no
- * cell is given a fixed height, so a long blurb grows the row instead of
+ * Bento widths on a six-column grid, declared per entry in the content so the
+ * reading order is exactly the order in the data — layout never reorders the
+ * work. Written out in full because Tailwind cannot see interpolated class
+ * names. The `lg:` prefix collapses everything to one column on small screens,
+ * and no cell has a fixed height, so a long blurb grows its row rather than
  * clipping.
  */
-const FEATURED_SPAN = "lg:col-span-3";
+const SPAN_CLASS: Record<NonNullable<BuildLogEntry["span"]>, string> = {
+  2: "lg:col-span-2",
+  3: "lg:col-span-3",
+  4: "lg:col-span-4",
+  6: "lg:col-span-6",
+};
 
-function restSpan(entry: BuildLogEntry, rest: BuildLogEntry[]): string {
-  if (entry.shot) return "lg:col-span-4";
-  if (rest.some((other) => other.shot)) return "lg:col-span-2";
-  return rest.length === 2 ? "lg:col-span-3" : "lg:col-span-2";
+function spanClass(entry: BuildLogEntry): string {
+  return SPAN_CLASS[entry.span ?? 3];
 }
 
 function TechChips({ tech }: { tech: string[] }) {
@@ -104,7 +106,7 @@ function Card({
 
       <p
         className={`mt-3 text-pretty leading-relaxed text-faint ${
-          entry.featured ? "max-w-[58ch] text-sm" : "text-[0.8125rem]"
+          (entry.span ?? 3) >= 4 ? "max-w-[64ch] text-sm" : "text-[0.8125rem]"
         }`}
       >
         {entry.blurb}
@@ -124,9 +126,6 @@ function Card({
  * facts rather than cards of their own.
  */
 export function BuildLog() {
-  const featured = buildLog.filter((entry) => entry.featured);
-  const rest = buildLog.filter((entry) => !entry.featured);
-
   return (
     <section
       id="build-log"
@@ -137,25 +136,17 @@ export function BuildLog() {
         <header className="max-w-2xl" data-reveal>
           <p className="label">Build log</p>
           <h2 id="build-log-heading" className="mt-4 text-2xl tracking-[-0.03em] sm:text-3xl">
-            Everything else that got built
+            Other things I&rsquo;ve built
           </h2>
           <p className="mt-4 max-w-xl text-pretty text-sm text-muted">
-            Smaller projects that never became case studies — weekend scope, real code,
-            shipped anyway. The three above are the ones worth reading in full.
+            Work outside the three case studies above — some built with a team, some
+            alone. Each one links to its code, or to the thing itself, running.
           </p>
         </header>
 
         <div className="mt-12 grid gap-3 sm:gap-4 lg:grid-cols-6">
-          {featured.map((entry, i) => (
-            <Card key={entry.name} entry={entry} span={FEATURED_SPAN} delay={i * 70} />
-          ))}
-          {rest.map((entry, i) => (
-            <Card
-              key={entry.name}
-              entry={entry}
-              span={restSpan(entry, rest)}
-              delay={(featured.length + i) * 70}
-            />
+          {buildLog.map((entry, i) => (
+            <Card key={entry.name} entry={entry} span={spanClass(entry)} delay={i * 70} />
           ))}
         </div>
 

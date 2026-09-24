@@ -438,8 +438,8 @@ export type BuildLogEntry = {
   repo?: string;
   live?: string;
   shot?: { src: string; alt: string };
-  /** Featured entries get a larger cell in the grid. */
-  featured?: boolean;
+  /** Explicit bento width on a 6-column grid, so reading order is never a side effect of layout. */
+  span?: 2 | 3 | 4 | 6;
 };
 
 /**
@@ -449,39 +449,38 @@ export type BuildLogEntry = {
  */
 export const buildLog: BuildLogEntry[] = [
   {
+    name: "YojnaMitra",
+    blurb:
+      "Government agricultural schemes are hard to find and harder to qualify for. This answers eight questions over WhatsApp — state, occupation, land ownership, age, category and more — and returns the schemes a farmer is actually eligible for, rather than a list they have to filter themselves. Built with a team of four.",
+    tech: ["TypeScript", "WhatsApp", "Twilio", "React", "Node.js"],
+    repo: "https://github.com/ManasYeola/YojnaMitra",
+    live: "https://yojnamitra-lac.vercel.app",
+    shot: {
+      src: "/shots/yojnamitra-desktop.jpg",
+      alt: "The YojnaMitra landing page, explaining that answering eight questions on WhatsApp returns a personalised list of agricultural schemes.",
+    },
+    span: 4,
+  },
+  {
+    name: "Anvesha",
+    blurb:
+      "An interactive descent through Pictoreal Volume 28 — the college magazine rebuilt as something you play rather than scroll. Shipped for the media team I lead.",
+    tech: ["JavaScript", "Interactive"],
+    repo: "https://github.com/Mahesh-Loya/anvesha-pictoreal",
+    live: "https://vol283d.pictoreal.in",
+    shot: {
+      src: "/shots/anvesha-desktop.jpg",
+      alt: "The Anvesha title screen, inviting the visitor to press Space to begin.",
+    },
+    span: 2,
+  },
+  {
     name: "BA Support Agent",
     blurb:
       "Given an inbound customer tweet, it classifies intent, drafts a reply grounded in how the airline actually resolved similar issues before, and then decides whether that reply is safe to send automatically or belongs with a human — stating its reason either way. Built on ~3M tweets from the Kaggle customer-support dataset.",
     tech: ["Python", "LLM", "RAG", "Classification"],
     repo: "https://github.com/Mahesh-Loya/ba-support-agent",
-    featured: true,
-  },
-  {
-    name: "The Loyalty Card",
-    blurb:
-      "A bakery loyalty card whose stamps can only be written against a server-verified identity — never against anything the browser claims about itself. The ten-stamp cap is enforced by the database rather than by a check a bug could skip.",
-    tech: ["TypeScript", "Privy", "Auth"],
-    repo: "https://github.com/Mahesh-Loya/The-Loyalty-Card",
-    featured: true,
-  },
-  {
-    name: "Anvesha",
-    blurb:
-      "The digital edition of Pictoreal Volume 28, built and shipped for the college media team I lead.",
-    tech: ["JavaScript", "Vercel"],
-    repo: "https://github.com/Mahesh-Loya/anvesha-pictoreal",
-    live: "https://anvesha-pictoreal.vercel.app",
-    shot: {
-      src: "/shots/anvesha-desktop.jpg",
-      alt: "The Anvesha digital publication homepage.",
-    },
-  },
-  {
-    name: "Agri-Assist",
-    blurb:
-      "A MERN application with a Flask API behind it: one module predicts plant disease from crop images, another gives farmers a marketplace to sell yield directly.",
-    tech: ["React", "Node.js", "Flask", "ML"],
-    repo: "https://github.com/Mahesh-Loya/Agri-Assist-Project",
+    span: 6,
   },
 ];
 
