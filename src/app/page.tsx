@@ -4,9 +4,8 @@ import { SignalStrip } from "@/components/signal-strip";
 import { ProofStrip } from "@/components/proof-strip";
 import { Offers } from "@/components/offers";
 import GlassBox from "@/components/glass-box";
-import { CaseStudies } from "@/components/case-studies";
+import { Work } from "@/components/work";
 import { Notes } from "@/components/notes";
-import { BuildLog } from "@/components/build-log";
 import { CapabilityMap } from "@/components/capability-map";
 import { Credentials } from "@/components/credentials";
 import { Contact } from "@/components/contact";
@@ -30,10 +29,9 @@ export default function Home() {
         {/* The proof: the claim, running, with its machinery visible. */}
         <GlassBox />
 
-        {/* The record. */}
-        <CaseStudies />
+        {/* The record: every project in one place, each running where it can. */}
+        <Work />
         <Notes />
-        <BuildLog />
         <CapabilityMap />
         <Credentials />
         <Contact />

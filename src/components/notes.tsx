@@ -1,3 +1,6 @@
+"use client";
+
+import { useId, useState } from "react";
 import Link from "next/link";
 import { caseStudies } from "@/content/site";
 
@@ -15,7 +18,72 @@ const notes = caseStudies.flatMap((study) =>
   })),
 );
 
+/** How many cards stand on screen before the reader asks for more. */
+const INITIAL_COUNT = 3;
+
+function Note({
+  note,
+  index,
+  hidden,
+}: {
+  note: (typeof notes)[number];
+  index: number;
+  hidden: boolean;
+}) {
+  return (
+    <li
+      key={`${note.slug}-${index}`}
+      className="glass-panel rounded-sm p-6 transition-colors duration-500 sm:p-7"
+      hidden={hidden}
+      data-reveal
+      data-reveal-delay={(index % INITIAL_COUNT) * 70}
+    >
+      <div className="flex h-full flex-col">
+        <div className="flex items-baseline justify-between gap-4">
+          <span className="font-mono text-[11px] tracking-[0.16em] text-faint">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <Link
+            href={`/work/${note.slug}`}
+            className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-faint transition-colors hover:text-bone"
+          >
+            {note.project}
+          </Link>
+        </div>
+
+        <h3 className="mt-5 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted">
+          {note.title}
+        </h3>
+
+        <blockquote className="mt-4 border-l-2 border-signal pl-4">
+          <p className="text-pretty font-serif text-lg leading-snug text-bone">
+            {note.insight}
+          </p>
+        </blockquote>
+
+        <details className="group/why mt-auto pt-6">
+          <summary className="inline-flex cursor-pointer list-none items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-faint transition-colors duration-300 hover:text-bone [&::-webkit-details-marker]:hidden">
+            <span aria-hidden="true" className="text-signal">
+              <span className="group-open/why:hidden">+</span>
+              <span className="hidden group-open/why:inline">&#8722;</span>
+            </span>
+            <span className="group-open/why:hidden">What went wrong</span>
+            <span className="hidden group-open/why:inline">Hide</span>
+          </summary>
+          <p className="mt-3 border-t border-line pt-3 text-pretty text-sm leading-relaxed text-faint">
+            {note.problem}
+          </p>
+        </details>
+      </div>
+    </li>
+  );
+}
+
 export function Notes() {
+  const [expanded, setExpanded] = useState(false);
+  const listId = useId();
+  const hasMore = notes.length > INITIAL_COUNT;
+
   return (
     <section
       id="notes"
@@ -25,54 +93,47 @@ export function Notes() {
       <div className="mx-auto max-w-6xl">
         <header className="max-w-2xl" data-reveal>
           <p className="label">Engineering notes</p>
-          <h2
-            id="notes-heading"
-            className="mt-4 text-3xl tracking-[-0.03em] sm:text-4xl"
-          >
+          <h2 id="notes-heading" className="mt-4 text-3xl tracking-[-0.03em] sm:text-4xl">
             What the work actually taught me
           </h2>
           <p className="mt-4 max-w-xl text-pretty text-muted">
-            Every system here failed in some specific way before it worked. These are
-            the lessons that cost something to learn.
+            Every system here failed in some specific way before it worked. The line is
+            the lesson; open a card for what it cost.
           </p>
         </header>
 
-        <ol className="mt-14 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+        <ol id={listId} className="mt-14 grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {notes.map((note, i) => (
-            <li
+            <Note
               key={`${note.slug}-${i}`}
-              className="group relative flex flex-col bg-void p-7 transition-colors duration-500 hover:bg-surface sm:p-8"
-              data-reveal
-              data-reveal-delay={i * 70}
-            >
-              <div className="flex items-baseline justify-between gap-4">
-                <span className="font-mono text-xs text-signal">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <Link
-                  href={`/work/${note.slug}`}
-                  className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-faint transition-colors hover:text-bone"
-                >
-                  {note.project}
-                </Link>
-              </div>
-
-              <h3 className="mt-5 text-lg tracking-[-0.01em] text-bone">
-                {note.title}
-              </h3>
-
-              <p className="mt-3 flex-1 text-sm leading-relaxed text-faint">
-                {note.problem}
-              </p>
-
-              <blockquote className="mt-6 border-l-2 border-signal pl-4">
-                <p className="font-serif text-lg leading-snug text-bone text-pretty">
-                  {note.insight}
-                </p>
-              </blockquote>
-            </li>
+              note={note}
+              index={i}
+              hidden={!expanded && i >= INITIAL_COUNT}
+            />
           ))}
         </ol>
+
+        {hasMore ? (
+          <div className="mt-8 flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setExpanded((open) => !open)}
+              aria-expanded={expanded}
+              aria-controls={listId}
+              className="inline-flex cursor-pointer items-center gap-2 border border-line px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors duration-300 hover:border-line-bright hover:text-bone"
+            >
+              <span aria-hidden="true" className="text-signal">
+                {expanded ? "\u2212" : "+"}
+              </span>
+              {expanded ? "Show fewer" : `Show all ${notes.length}`}
+            </button>
+            <span aria-hidden="true" className="rule h-px flex-1" />
+            <span className="font-mono text-[10px] tracking-[0.14em] text-faint tabular-nums">
+              {String(expanded ? notes.length : INITIAL_COUNT).padStart(2, "0")}/
+              {String(notes.length).padStart(2, "0")}
+            </span>
+          </div>
+        ) : null}
       </div>
     </section>
   );

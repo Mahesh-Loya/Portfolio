@@ -78,6 +78,11 @@ export type CaseStudy = {
   repo?: string;
   /** A real screenshot of the shipped product. Proof beats description. */
   shot?: { src: string; alt: string };
+  /**
+   * Set only where the live site has been verified to render inside an iframe.
+   * Absent means it was checked and does not embed, or needs a login.
+   */
+  embed?: { url: string; note?: string };
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -89,6 +94,8 @@ export const caseStudies: CaseStudy[] = [
     },
     live: "https://vyavsayassist.app",
     repo: "https://github.com/Mahesh-Loya/Vyavsay_Assist",
+    // No embed: the site paints its background inside an iframe but never renders,
+    // and the dealer CRM sits behind a login. A built simulation replaces it.
     title: "Vyavsay Assist",
     kicker: "An AI sales copilot in daily use at a car dealership",
     period: "Feb 2026 — Present",
@@ -280,6 +287,7 @@ export const caseStudies: CaseStudy[] = [
       alt: "The live blood donation platform, showing per-year donor totals and a live blood-group inventory broken down by group.",
     },
     live: "https://bdd.pictoreal.in",
+    embed: { url: "https://bdd.pictoreal.in" },
     title: "Blood Donation Drive Management System",
     kicker: "Paper queues replaced by a workflow, live at PICT",
     period: "2025",
@@ -440,6 +448,8 @@ export type BuildLogEntry = {
   shot?: { src: string; alt: string };
   /** Explicit bento width on a 6-column grid, so reading order is never a side effect of layout. */
   span?: 2 | 3 | 4 | 6;
+  /** Verified-embeddable live site, same rule as the case studies. */
+  embed?: { url: string; note?: string };
 };
 
 /**
@@ -451,10 +461,11 @@ export const buildLog: BuildLogEntry[] = [
   {
     name: "YojnaMitra",
     blurb:
-      "Government agricultural schemes are hard to find and harder to qualify for. This answers eight questions over WhatsApp — state, occupation, land ownership, age, category and more — and returns the schemes a farmer is actually eligible for, rather than a list they have to filter themselves. Built with a team of four.",
+      "Government agricultural schemes are hard to find and harder to qualify for. This answers eight questions over WhatsApp — state, occupation, land ownership, age, category and more — and returns the schemes a farmer is actually eligible for, rather than a list they have to filter themselves. In a team of four, I built the WhatsApp service and the eligibility engine behind it.",
     tech: ["TypeScript", "WhatsApp", "Twilio", "React", "Node.js"],
     repo: "https://github.com/ManasYeola/YojnaMitra",
     live: "https://yojnamitra-lac.vercel.app",
+    embed: { url: "https://yojnamitra-lac.vercel.app" },
     shot: {
       src: "/shots/yojnamitra-desktop.jpg",
       alt: "The YojnaMitra landing page, explaining that answering eight questions on WhatsApp returns a personalised list of agricultural schemes.",
@@ -468,6 +479,7 @@ export const buildLog: BuildLogEntry[] = [
     tech: ["JavaScript", "Interactive"],
     repo: "https://github.com/Mahesh-Loya/anvesha-pictoreal",
     live: "https://vol283d.pictoreal.in",
+    embed: { url: "https://vol283d.pictoreal.in" },
     shot: {
       src: "/shots/anvesha-desktop.jpg",
       alt: "The Anvesha title screen, inviting the visitor to press Space to begin.",

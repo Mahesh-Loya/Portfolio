@@ -3,11 +3,25 @@ import type { Offer } from "@/content/site";
 import { offers } from "@/content/site";
 
 /**
- * A numbered editorial list rather than a grid of service cards: four
- * full-width rows separated by hairlines, each one a claim on the left and the
- * evidence for it on the right. The proof link is the point of the section, so
- * it carries the accent and covers the whole row as its target.
+ * Four capability panels rather than four paragraphs. Each card leads with the
+ * claim and one sentence of evidence; the rest of the argument stays in the DOM
+ * behind a native disclosure, so the page reads as an instrument panel while
+ * losing none of the substance (or its findability in browser search).
  */
+
+/**
+ * Splits a blurb into its opening sentence and the remainder at render time so
+ * the shortened copy is never duplicated in content. Falls back to the whole
+ * string when there is no sentence break to split on.
+ */
+function splitLead(blurb: string): { lead: string; rest: string } {
+  const breakAt = blurb.indexOf(". ");
+  if (breakAt === -1) return { lead: blurb, rest: "" };
+  return {
+    lead: blurb.slice(0, breakAt + 1),
+    rest: blurb.slice(breakAt + 2).trim(),
+  };
+}
 
 function TechChips({ tech }: { tech: string[] }) {
   return (
@@ -24,53 +38,61 @@ function TechChips({ tech }: { tech: string[] }) {
   );
 }
 
-function Row({ offer, index }: { offer: Offer; index: number }) {
+function Card({ offer, index }: { offer: Offer; index: number }) {
+  const { lead, rest } = splitLead(offer.blurb);
+  const ordinal = String(index + 1).padStart(2, "0");
+
   return (
     <li
-      className="group relative -mx-4 border-t border-line px-4 outline-signal outline-offset-[-2px] last:border-b has-[a:focus-visible]:outline-2 sm:-mx-6 sm:px-6"
+      className="glass-panel bracketed group relative flex flex-col p-6 transition-colors duration-500 sm:p-8"
       data-reveal
       data-reveal-delay={index * 70}
     >
-      {/* Painted behind the content so the hover lift animates on its own
-          timing, independent of the [data-reveal] entrance transition. */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-surface opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-has-[a:focus-visible]:opacity-100"
-      />
+      <div className="flex items-center gap-3">
+        <span className="font-mono text-[11px] tracking-[0.16em] text-faint transition-colors duration-300 group-hover:text-signal group-focus-within:text-signal">
+          {ordinal}
+        </span>
+        <span aria-hidden="true" className="rule h-px flex-1" />
+      </div>
 
-      <div className="relative grid gap-y-6 py-10 lg:grid-cols-12 lg:gap-x-12 lg:py-14">
-        <div className="lg:col-span-5">
-          <span className="font-mono text-[11px] tracking-[0.16em] text-faint transition-colors duration-300 group-hover:text-signal group-has-[a:focus-visible]:text-signal">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <h3 className="mt-4 max-w-[22ch] text-balance text-2xl leading-tight tracking-tight text-bone sm:text-3xl">
-            <span className="inline-block transition-transform duration-500 group-hover:translate-x-1">
-              {offer.title}
+      <h3 className="mt-5 max-w-[24ch] text-balance text-xl leading-tight tracking-tight text-bone sm:text-2xl">
+        {offer.title}
+      </h3>
+
+      <p className="mt-4 text-pretty text-sm leading-relaxed text-muted">{lead}</p>
+
+      {rest ? (
+        <details className="group/more mt-3">
+          <summary className="inline-flex cursor-pointer list-none items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-faint transition-colors duration-300 hover:text-bone [&::-webkit-details-marker]:hidden">
+            <span aria-hidden="true" className="text-signal">
+              <span className="group-open/more:hidden">+</span>
+              <span className="hidden group-open/more:inline">&#8722;</span>
             </span>
-          </h3>
-        </div>
+            <span className="group-open/more:hidden">Detail</span>
+            <span className="hidden group-open/more:inline">Less</span>
+          </summary>
+          <p className="mt-3 border-l border-line pl-4 text-pretty text-sm leading-relaxed text-faint">
+            {rest}
+          </p>
+        </details>
+      ) : null}
 
-        <div className="lg:col-span-6 lg:col-start-7">
-          <p className="max-w-[60ch] text-pretty leading-relaxed text-muted">{offer.blurb}</p>
+      <div className="mt-auto pt-7">
+        <TechChips tech={offer.tech} />
 
-          <div className="mt-7">
-            <TechChips tech={offer.tech} />
-          </div>
-
-          <div className="mt-7">
-            <Link
-              href={offer.proofHref}
-              className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-signal uppercase after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
+        <div className="mt-5 border-t border-line pt-5">
+          <Link
+            href={offer.proofHref}
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-signal"
+          >
+            {offer.proofLabel}
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:translate-x-1"
             >
-              {offer.proofLabel}
-              <span
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              >
-                &#8594;
-              </span>
-            </Link>
-          </div>
+              &#8594;
+            </span>
+          </Link>
         </div>
       </div>
     </li>
@@ -91,14 +113,14 @@ export function Offers() {
             Four things you can hire me to build
           </h2>
           <p className="mt-4 max-w-xl text-pretty text-sm text-muted">
-            Each one is something I have already shipped — follow the link at the end of a
-            row to the working thing behind the claim.
+            Each one is something I have already shipped — follow the link on a card to
+            the working thing behind the claim.
           </p>
         </header>
 
-        <ol className="mt-14">
+        <ol className="mt-14 grid gap-4 md:grid-cols-2 md:gap-5">
           {offers.map((offer, i) => (
-            <Row key={offer.title} offer={offer} index={i} />
+            <Card key={offer.title} offer={offer} index={i} />
           ))}
         </ol>
       </div>
