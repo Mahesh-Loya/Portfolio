@@ -486,12 +486,20 @@ export const buildLog: BuildLogEntry[] = [
     span: 2,
   },
   {
+    name: "Aria — AI Calling Agent",
+    blurb:
+      "During a mass-casualty event, nobody has time to fill in a spreadsheet. Aria phones hospital coordinators instead, holds a normal conversation to pull out how many beds, ICUs and ventilators each one can spare or needs, and feeds an optimisation engine that returns a regional transfer plan. Real outbound telephony, multilingual, built with a team of three.",
+    tech: ["JavaScript", "Twilio", "Media Streams", "Voice AI", "Optimisation"],
+    repo: "https://github.com/DarshanVarpe/AI_Calling_Agent",
+    span: 3,
+  },
+  {
     name: "BA Support Agent",
     blurb:
       "Given an inbound customer tweet, it classifies intent, drafts a reply grounded in how the airline actually resolved similar issues before, and then decides whether that reply is safe to send automatically or belongs with a human — stating its reason either way. Built on ~3M tweets from the Kaggle customer-support dataset.",
     tech: ["Python", "LLM", "RAG", "Classification"],
     repo: "https://github.com/Mahesh-Loya/ba-support-agent",
-    span: 6,
+    span: 3,
   },
 ];
 

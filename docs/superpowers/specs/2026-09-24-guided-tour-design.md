@@ -251,8 +251,22 @@ two voices must never overlap.
 ## What Mahesh needs to prepare
 
 1. **Voice samples** for cloning — two to three minutes of clean speech, one take, quiet
-   room, no music, speaking naturally rather than reading stiffly. ElevenLabs Instant Voice
-   Cloning needs consent that the voice is his own, which it is.
+   room, speaking naturally rather than reading stiffly. ElevenLabs Instant Voice Cloning
+   needs consent that the voice is his own, which it is.
+
+   **Take 1 (2026-09-24) is recorded but is a WhatsApp voice note**, and that is a problem
+   worth one re-record: 19 kb/s Opus, mono, with peaks at +0.2 dBFS, meaning WhatsApp's
+   automatic gain has already limited and clipped it, on top of its noise suppression. The
+   length (2:29) and delivery are right; the encoding is not. A clone built from it will
+   sound thinner and more artefacted than the same performance captured properly.
+
+   The fix is three minutes of work: re-record with the phone's own Voice Recorder app,
+   which saves at roughly ten times the bitrate with none of the call-optimised processing.
+   Take 1 stays as the fallback so nothing is blocked either way.
+
+   Raw samples live in `voice-samples/` and are gitignored — publishing a clean sample of
+   someone's voice is precisely what voice-cloning misuse needs. Generated narration in
+   `public/audio/` is fine to commit.
 2. **A Ready Player Me avatar** — create it from a selfie at readyplayer.me, then export the
    `.glb` with the morph-target query parameters above and save it to `public/avatar/`.
    Without those parameters the face cannot animate.
